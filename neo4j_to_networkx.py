@@ -33,3 +33,7 @@ nx.draw(G, with_labels=True)
 plt.show()
 
 
+#Recomandation:
+#MATCH (user:User {name: "Alice"})-[:FRIEND]-(friend)-[:FRIEND]-(friend_of_friend)
+#WHERE NOT (user)-[:FRIEND]-(friend_of_friend)
+#RETURN friend_of_friend
