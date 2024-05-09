@@ -1,19 +1,25 @@
 from Post import Post
-
+from pil import Image
 
 class User:
 
-    def __init__(self, username, name, surname, age, password):
+    def __init__(self, username, name, surname, age, password, location, sex, mail):
         self.username = username
         self.name = name
         self.surname = surname
         self.age = age
         self.password = password
+        self.location = location
+        self.sex = sex
+        self.mail = mail
 
         self.friends = [User]
         self.friends_requests_send = [User]
         self.friends_requests_received = [User]
 
+        self.profile_description = ""
+        self.profile_picture = Image
+        self.interests = []
 
     def add_friends(self, user: User):
         self.friends_requests_send.append(user)
@@ -38,3 +44,11 @@ class User:
     def send_group_message(self, group):
         #query bdd
         return
+
+    #personalisation profile
+    def update_description(self, content:str):
+        self.profile_description = content
+
+    def update_profile_picture(self, image):
+        self.profile_picture = image
+
