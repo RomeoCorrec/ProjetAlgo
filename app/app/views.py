@@ -1,6 +1,6 @@
 # app/views.py
-from django.shortcuts import render
-from .forms import UserCreationForm
+from django.shortcuts import render, redirect
+from .forms.creationAccount import UserCreationForm
 
 def create_account(request):
     if request.method == 'POST':
@@ -21,3 +21,11 @@ def create_account(request):
     else:
         form = UserCreationForm()
     return render(request, 'create_account.html', {'form': form})
+
+def index(request):
+    return redirect('create_account')
+
+def home(request):
+    return render(request, 'index.html')
+def login_view(request):
+    return render(request, 'login.html')
