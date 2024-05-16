@@ -1,6 +1,6 @@
 # app/views.py
 from django.shortcuts import render, redirect
-from .forms.creationAccount import UserCreationForm
+from .forms.forms import UserCreationForm, UserLoginForm
 
 def create_account(request):
     if request.method == 'POST':
@@ -17,7 +17,7 @@ def create_account(request):
             sex = form.cleaned_data['sex']
             mail = form.cleaned_data['mail']
             # Ici, vous pouvez créer un objet User ou faire d'autres opérations nécessaires
-            return render(request, 'account_created.html', {'username': username})
+            return redirect('login')
     else:
         form = UserCreationForm()
     return render(request, 'create_account.html', {'form': form})
@@ -28,4 +28,15 @@ def index(request):
 def home(request):
     return render(request, 'index.html')
 def login_view(request):
-    return render(request, 'login.html')
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            # Ici, vous pouvez effectuer des actions supplémentaires, telles que l'authentification de l'utilisateur
+            username = form["username"].value()
+            return redirect('main_page', username = username)  # Redirection vers la page principale si le formulaire est valide
+    else:
+        form = UserLoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def main_page(request, username):
+    return render(request, 'main_page.html', {'username': username})
