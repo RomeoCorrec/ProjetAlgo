@@ -1,5 +1,4 @@
-from pil import Image
-
+from PIL import Image
 
 class Post:
 

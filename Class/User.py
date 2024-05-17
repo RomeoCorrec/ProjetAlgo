@@ -1,5 +1,5 @@
-from Post import Post
-from pil import Image
+from Class import Post
+from PIL import Image
 
 class User:
 
@@ -21,11 +21,11 @@ class User:
         self.profile_picture = Image
         self.interests = []
 
-    def add_friends(self, user: User):
+    def add_friends(self, user):
         self.friends_requests_send.append(user)
         # QUERY BDD waiting_for_answers
 
-    def accept_friends(self, user: User):
+    def accept_friends(self, user):
         self.friends.append(user)
         self.friends_requests_received.remove(user)
         # QUERY BDD update relation
@@ -37,7 +37,7 @@ class User:
     def comment_post(self, post: Post, content, image=None):
         post.comment(content, image)
 
-    def send_private_message(self, content:str, user:User):
+    def send_private_message(self, content:str, user):
         #Query bdd
         return
 
