@@ -2,22 +2,10 @@ from Class.User import User
 from utils import graphDB
 from neo4j import GraphDatabase
 
-# Create a new user object
-user = User(
-    username="johndoe",
-    name="John",
-    surname="Doe",
-    age=30,
-    password="password123",
-    location="New York, NY",
-    sex="Male",
-    mail="johndoe@example.com",
-)
-
-# Add interests to the user object
-user.interests.append("Software Engineering")
-user.interests.append("Travel")
-user.interests.append("Photography")
 GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
 
-print(GDB.calculate_similarities_between_common_friends("Alice"))
+user3 = User("test3", "test3", "test3", 20, "password3", "Paris", "F","mail3")
+
+user4 = User("test4", "test4", "test4", 20, "password4", "Paris", "F","mail4")
+
+print(GDB.get_friends_requests(user3.username))

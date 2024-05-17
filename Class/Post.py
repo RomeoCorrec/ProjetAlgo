@@ -13,6 +13,3 @@ class Post:
 
     def add_comment(self, content):
         self.comments.append(content)
-
-
-
