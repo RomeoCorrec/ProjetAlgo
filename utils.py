@@ -1,5 +1,6 @@
 from neo4j import GraphDatabase
 from Class.User import User
+from Class.Post import Post
 
 class graphDB:
     def __init__(self, uri, user, password):
@@ -8,12 +9,17 @@ class graphDB:
     def close(self):
         self._driver.close()
 
-    def create_user(self, user: User):
+    def add_new_user(self, user: User):
         with self._driver.session() as session:
+            hashed_password = hash(user.password)
             query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location})"
-            print(query)
             session.run(query, username=user.username, name=user.name, surname=user.surname, age=user.age,
-                        password=user.password, location=user.location, sex=user.sex, mail=user.mail)
+                        password=hashed_password, location=user.location, sex=user.sex, mail=user.mail)
+
+    def delete_user_by_username(self, username):
+        with self._driver.session() as session:
+            query = "MATCH (u:User {username: $username}) DETACH DELETE u"
+            session.run(query, username=username)
 
     def get_connected_users(self, user_name):
         with self._driver.session() as session:
@@ -77,3 +83,34 @@ class graphDB:
 
         # Return the sorted list of similarities
         return sorted_similarities
+
+    def get_user_by_username(self, username):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (u:User {username: $username}) RETURN u""", username=username)
+            user = result.single().data().get('u')
+        return user
+
+    def check_username_exists(self, username):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (u:User {username: $username}) RETURN u""", username=username)
+            return result.single() is not None
+
+    def add_new_friend_request(self, sender, receiver):
+        with self._driver.session() as session:
+            query = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND_REQUEST]->(b)"
+            session.run(query, sender=sender, receiver=receiver)
+
+    def accept_friend_request(self, sender, receiver):
+        with self._driver.session() as session:
+            query = "MATCH (a:User {username: $sender})-[r:FRIEND_REQUEST]->(b:User {username: $receiver}) DELETE r"
+            session.run(query, sender=sender, receiver=receiver)
+            query = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND]->(b)"
+            query2 = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND]->(b)"
+            session.run(query, sender=sender, receiver=receiver)
+            session.run(query2, sender=receiver, receiver=sender)
+
+    def get_friends_requests(self, username):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (a:User {username: $username})<-[r:FRIEND_REQUEST]-(b:User) RETURN b.username as username""", username=username)
+            friends_requests = [row['username'] for row in result]
+        return friends_requests
