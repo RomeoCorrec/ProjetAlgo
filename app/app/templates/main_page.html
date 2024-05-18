@@ -9,5 +9,9 @@
 <body>
     <h1>TSN</h1>
     <p>Welcome, {{ username }}!</p>
+    <form method="post" action="{{ logout_url }}">
+        {% csrf_token %}
+        <a href="{% url 'home' %}" class="logout">Logout</a>
+    </form>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
-from Class.User import User
-from Class.Post import Post
+from . import User
+
 
 class graphDB:
     def __init__(self, uri, user, password):
@@ -11,16 +11,20 @@ class graphDB:
 
     def add_new_user(self, user: User):
         with self._driver.session() as session:
-            hashed_password = hash(user.password)
             query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location})"
             session.run(query, username=user.username, name=user.name, surname=user.surname, age=user.age,
-                        password=hashed_password, location=user.location, sex=user.sex, mail=user.mail)
+                        password=user.password, location=user.location, sex=user.sex, mail=user.mail)
 
     def delete_user_by_username(self, username):
         with self._driver.session() as session:
             query = "MATCH (u:User {username: $username}) DETACH DELETE u"
             session.run(query, username=username)
 
+    def get_password_by_username(self, username):
+        with self._driver.session() as session:
+            result = session.run("MATCH (u:User {username: $username}) RETURN u.password AS password", username=username)
+            password = result.single()["password"]
+        return password
     def get_connected_users(self, user_name):
         with self._driver.session() as session:
             result = session.run("MATCH (u:User {name: $user_name})-[:KNOWS]->(v:User) WHERE NOT u = v RETURN v.name AS name", user_name=user_name)
