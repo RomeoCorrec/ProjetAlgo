@@ -122,6 +122,17 @@
             color: #fff;
             margin-top: auto;
         }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -137,7 +148,7 @@
         </header>
         <main>
             <div class="profile-container">
-                <h2>Modify Profile {{ user_info.age }}</h2>
+                <h2>Edit Profile</h2>
                 <form method="post">
                     {% csrf_token %}
                     <label for="name">Name</label>
@@ -163,6 +174,7 @@
                     <input type="email" id="mail" name="mail" value="{{ user_info.mail }}" required>
 
                     <button type="submit">Save Changes</button>
+                    <a href="{% url 'profil' username %}" class="back-button">&#8592; Back to Profile</a>
                 </form>
             </div>
         </main>
