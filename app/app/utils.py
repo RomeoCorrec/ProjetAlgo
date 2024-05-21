@@ -1,5 +1,5 @@
 from neo4j import GraphDatabase
-from . import User
+from .Class.User import User
 
 
 class graphDB:
@@ -11,7 +11,7 @@ class graphDB:
 
     def add_new_user(self, user: User):
         with self._driver.session() as session:
-            query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location})"
+            query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location, sex: $sex, mail: $mail})"
             session.run(query, username=user.username, name=user.name, surname=user.surname, age=user.age,
                         password=user.password, location=user.location, sex=user.sex, mail=user.mail)
 
@@ -25,15 +25,16 @@ class graphDB:
             result = session.run("MATCH (u:User {username: $username}) RETURN u.password AS password", username=username)
             password = result.single()["password"]
         return password
+
     def get_connected_users(self, user_name):
         with self._driver.session() as session:
-            result = session.run("MATCH (u:User {name: $user_name})-[:KNOWS]->(v:User) WHERE NOT u = v RETURN v.name AS name", user_name=user_name)
+            result = session.run("MATCH (u:User {username: $user_name})-[:FRIEND]->(v:User) WHERE NOT u = v RETURN v.name AS name", user_name=user_name)
             connected_users = [row['name'] for row in result]
         return connected_users
 
     def get_user_by_name(self, user_name):
         with self._driver.session() as session:
-            result = session.run("MATCH (u:User {name: $user_name}) RETURN u.name AS name, u.age AS age", user_name=user_name)
+            result = session.run("MATCH (u:User {username: $user_name}) RETURN u", user_name=user_name)
             user = result.single()
         return user
 
@@ -118,3 +119,9 @@ class graphDB:
             result = session.run("""MATCH (a:User {username: $username})<-[r:FRIEND_REQUEST]-(b:User) RETURN b.username as username""", username=username)
             friends_requests = [row['username'] for row in result]
         return friends_requests
+
+    def modify_profil(self, username, name, surname, age, location, sex, mail):
+        with self._driver.session() as session:
+            query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail"
+            session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail)
+        return
