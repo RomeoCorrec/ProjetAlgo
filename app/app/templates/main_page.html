@@ -1,17 +1,162 @@
 <!-- app/templates/app/main_page.html -->
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSN</title>
+    <title>Main Page</title>
+ <style>
+         /* main_page.css */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+
+    header nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    header nav ul li {
+        margin-left: 20px;
+    }
+
+    header nav ul li a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    main {
+        display: flex;
+        flex: 1;
+        padding: 20px;
+    }
+
+    .sidebar-left, .sidebar-right {
+        flex: 1;
+        padding: 20px;
+        background-color: #fff;
+        margin: 0 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .feed {
+        flex: 3;
+        padding: 20px;
+        background-color: #fff;
+        margin: 0 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+        background-color: #007bff;
+        color: #fff;
+        text-align: center;
+        padding: 10px 20px;
+        margin-top: auto;
+    }
+
+    button {
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: calc(100% - 22px); /* Full width - padding */
+        box-sizing: border-box;
+    }
+
+ </style>
 </head>
 <body>
-    <h1>TSN</h1>
-    <p>Welcome, {{ username }}!</p>
-    <form method="post" action="{{ logout_url }}">
-        {% csrf_token %}
-        <a href="{% url 'home' %}" class="logout">Logout</a>
-    </form>
+    <div class="container">
+        <header>
+            <h1>My Social Network</h1>
+            <nav>
+                <ul>
+                    <li><a href="">Profile</a></li>
+                    <li><a href="">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <aside class="sidebar-left">
+                <h2>Friends</h2>
+                <!-- Gestion des amis -->
+                <div class="friends-management">
+                    <button ">Manage Friends</button>
+                </div>
+                <h2>Search Profiles</h2>
+                <!-- Recherche de profils -->
+                <div class="profile-search">
+                    <input type="text" placeholder="Search profiles...">
+                    <button>Search</button>
+                </div>
+            </aside>
+            <section class="feed">
+                <h2>Posts</h2>
+                <!-- Fil de posts -->
+                <div class="posts-feed">
+                    <!-- Les posts seront chargés ici -->
+                </div>
+            </section>
+            <aside class="sidebar-right">
+                <h2>Messages</h2>
+                <!-- Messagerie privée et groupée -->
+                <div class="messaging">
+                    <button onclick="">Private Messages</button>
+                    <button onclick="">Group Messages</button>
+                </div>
+                <h2>Profile</h2>
+                <!-- Modification du profil -->
+                <div class="profile-edit">
+                    <button onclick="">Edit Profile</button>
+                </div>
+            </aside>
+        </main>
+        <footer>
+            <p>&copy; 2024 ISEP</p>
+        </footer>
+    </div>
 </body>
 </html>
