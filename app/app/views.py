@@ -5,6 +5,7 @@ from .Class.User import User
 from .utils import graphDB
 import bcrypt
 import re
+from django.contrib import messages
 
 def create_account(request):
     if request.method == 'POST':
@@ -71,6 +72,10 @@ def main_page(request):
     # Récupérer les amis de l'utilisateur
     friends = GDB.get_connected_users(request.session['user']["username"])
     print(friends)
+    if request.method == 'POST':
+        search_query = request.POST.get('search_query', '')
+        if search_query:
+            return redirect('search_profil', username=search_query)
     return render(request, 'main_page.html')
 
 def deconexion(request):
@@ -132,3 +137,24 @@ def modify_profil(request):
 
     return render(request, 'modify_profil.html', {"name": name, "surname": surname, "age": age ,
                                                   "location": location, "sex": sex, "mail": mail})
+
+def search_profil(request):
+    if request.method == 'POST':
+        search_query = request.POST.get('search_query', '')
+        GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+        if search_query:
+            username = search_query
+            if GDB.check_username_exists(username):
+                user_info = GDB.get_user_by_username(username)
+                name = user_info["name"]
+                surname = user_info["surname"]
+                age = user_info["age"]
+                location = user_info["location"]
+                sex = user_info["sex"]
+                mail = user_info["mail"]
+                return render(request, 'search_profil.html', {"username":username,"name": name, "surname": surname, "age": age ,
+                                                  "location": location, "sex": sex, "mail": mail})
+            else:
+                messages.error(request, f"User '{search_query}' not found.")
+                return redirect('main_page')
+    return render(request, 'main_page.html')

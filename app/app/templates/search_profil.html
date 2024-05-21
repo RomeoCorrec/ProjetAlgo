@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        header nav ul li {
+            margin-left: 20px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        header nav ul li a:hover {
+            color: #d1e7ff;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .user-info-block, .activities-block {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 10px;
+        }
+
+        .user-info-block h2, .activities-block h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .profile-details p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .profile-details p strong {
+            color: #333;
+        }
+
+        .profile-details p span {
+            color: #007bff;
+        }
+
+        .posts .post {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .post-meta span {
+            font-size: 14px;
+        }
+
+        .post-meta button {
+            background-color: transparent;
+            color: #007bff;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .post-meta button:hover {
+            color: #0056b3;
+        }
+
+        .friends ul, .recent-activity ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .friends li, .recent-activity li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .friends li img, .recent-activity li img {
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .friends li span, .recent-activity li span {
+            font-size: 16px;
+            color: #555;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Social Network</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'main_page' %}">Home</a></li>
+                    <li><span>{{ request.session.user.username }}</span></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section class="user-info-block">
+                <h2>{{ username }}'s Profile</h2>
+                <div class="profile-details">
+                    <p><strong>Name:</strong> <span>{{ name }} {{surname }}</span></p>
+                    <p><strong>Age:</strong> <span>{{ age }}</span></p>
+                    <p><strong>Location:</strong> <span>{{ location }}</span></p>
+                    <p><strong>Sex:</strong> <span>{{ sex }}</span></p>
+                    <p><strong>Email:</strong> <span>{{ mail }}</span></p>
+                </div>
+                <div class="friends">
+                    <h2>Friends</h2>
+                    <ul>
+                        <!-- Exemple d'ami -->
+                        <li>
+                            <img src="" alt="Friend">
+                            <span>Friend Name</span>
+                        </li>
+                        <!-- Ajouter d'autres amis ici -->
+                    </ul>
+                </div>
+            </section>
+            <section class="activities-block">
+                <h2>Activities and Posts</h2>
+                <div class="recent-activity">
+                    <h2>Recent Activity</h2>
+                    <ul>
+                        <!-- Exemple d'activité récente -->
+                        <li>
+                            <img src="" alt="Activity">
+                            <span>Activity Description</span>
+                        </li>
+                        <!-- Ajouter d'autres activités ici -->
+                    </ul>
+                </div>
+                <div class="user-posts">
+                    <h2>Posts</h2>
+                  <!--
+                  <div class="posts">
+                        {% for post in posts %}
+                            <div class="post">
+                                <p>{{ post.content }}</p>
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" alt="Post Image">
+                                {% endif %}
+                                <div class="post-meta">
+                                    <span>{{ post.number_like }} Likes</span>
+                                    <button>Like</button>
+                                    <button>Comment</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    -->
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 ISEP</p>
+        </footer>
+    </div>
+</body>
+</html>

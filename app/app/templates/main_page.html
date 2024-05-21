@@ -146,8 +146,17 @@
                 <h2>Search Profiles</h2>
                 <!-- Recherche de profils -->
                 <div class="profile-search">
-                    <input type="text" placeholder="Search profiles...">
-                    <button>Search</button>
+                <form method="POST" action="{% url 'search_profil'%}">
+                    {% csrf_token %}
+                    <input type="text" name="search_query" placeholder="Search profiles..." required>
+                    <button type="submit">Search</button>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </form>
+                </form>
                 </div>
             </aside>
             <section class="feed">
