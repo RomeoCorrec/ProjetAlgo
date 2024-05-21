@@ -166,20 +166,20 @@
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'main_page' username %}">Home</a></li>
+                    <li><a href="{% url 'main_page' %}">Home</a></li>
                     <li><a href="#">Logout</a></li>
                 </ul>
             </nav>
         </header>
         <main>
             <section class="user-info-block">
-                <h2>{{ username }}'s Profile</h2>
+                <h2>{{ request.session.user.username }}'s Profile</h2>
                 <div class="profile-details">
-                    <p><strong>Name:</strong> <span>{{ user_info.name }} {{ user_info.surname }}</span></p>
-                    <p><strong>Age:</strong> <span>{{ user_info.age }}</span></p>
-                    <p><strong>Location:</strong> <span>{{ user_info.location }}</span></p>
-                    <p><strong>Sex:</strong> <span>{{ user_info.sex }}</span></p>
-                    <p><strong>Email:</strong> <span>{{ user_info.mail }}</span></p>
+                    <p><strong>Name:</strong> <span>{{ request.session.user.name }} {{ request.session.user.surname }}</span></p>
+                    <p><strong>Age:</strong> <span>{{ request.session.user.age }}</span></p>
+                    <p><strong>Location:</strong> <span>{{ request.session.user.location }}</span></p>
+                    <p><strong>Sex:</strong> <span>{{ request.session.user.sex }}</span></p>
+                    <p><strong>Email:</strong> <span>{{ request.session.user.mail }}</span></p>
                 </div>
                 <div class="friends">
                     <h2>Friends</h2>

@@ -130,8 +130,9 @@
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'profil' username %}">Profil</a></li>
-                    <li><a href="">Logout</a></li>
+                    <li><a href="{% url 'profil' %}">Profil</a></li>
+                    <li><span>{{ request.session.user.username }}</span></li>
+                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
             </nav>
         </header>
@@ -166,7 +167,7 @@
                 <h2>Profile</h2>
                 <!-- Modification du profil -->
                 <div class="profile-edit">
-                    <a href="{% url 'modify_profil' username %}" class="button">Edit Profile</a>
+                    <a href="{% url 'modify_profil' %}" class="button">Edit Profile</a>
                 </div>
             </aside>
         </main>
