@@ -80,3 +80,23 @@ def profil(request, username):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     user_info = GDB.get_user_by_username(username)
     return render(request, 'profil.html', {'username': username, 'user_info': user_info})
+
+def modify_profil(request, username):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    user_info = GDB.get_user_by_name(username)
+
+    if request.method == 'POST':
+        user_info.name = request.POST['name']
+        user_info.surname = request.POST['surname']
+        user_info.age = request.POST['age']
+        user_info.location = request.POST['location']
+        user_info.sex = request.POST['sex']
+        user_info.mail = request.POST['mail']
+        user_info.password = request.POST['password']
+
+        # Mettre à jour les informations de l'utilisateur dans la base de données
+        #update_user_info(user_info)  # Assurez-vous que cette fonction met à jour les informations de l'utilisateur
+
+        return redirect('profil', username=username, user_info = user_info)
+
+    return render(request, 'modify_profil.html', {'username': username, 'user_info': user_info})

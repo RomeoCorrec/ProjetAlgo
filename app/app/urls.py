@@ -26,5 +26,6 @@ urlpatterns = [
     path('create-account/', views.create_account, name='create_account'),
     path('login/', views.login_view, name='login'),
     path('main-page/<str:username>/', views.main_page, name='main_page'),
-    path('profil/<str:username>/', views.profil, name='profil')
+    path('profil/<str:username>/', views.profil, name='profil'),
+    path('modify-profil/<str:username>/', views.modify_profil, name='modify_profil'),
 ]

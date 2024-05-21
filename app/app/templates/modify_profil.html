@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Profile</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        header nav ul li {
+            margin-left: 20px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        header nav ul li a:hover {
+            color: #d1e7ff;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .profile-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .profile-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-container label {
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .profile-container input[type="text"],
+        .profile-container input[type="email"],
+        .profile-container input[type="number"],
+        .profile-container input[type="password"],
+        .profile-container select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .profile-container button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .profile-container button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #007bff;
+            color: #fff;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Social Network</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'main_page' username %}">Home</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="profile-container">
+                <h2>Modify Profile {{ user_info.age}}</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="{{ user_info.name }}" required>
+
+                    <label for="surname">Surname</label>
+                    <input type="text" id="surname" name="surname" value="{{ user_info.surname }}" required>
+
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" value="{{ user_info.age }}" required>
+
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" value="{{ user_info.location }}" required>
+
+                    <label for="sex">Sex</label>
+                    <select id="sex" name="sex" required>
+                        <option value="Male" {% if user_info.sex == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if user_info.sex == "Female" %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if user_info.sex == "Other" %}selected{% endif %}>Other</option>
+                    </select>
+
+                    <label for="mail">Email</label>
+                    <input type="email" id="mail" name="mail" value="{{ user_info.mail }}" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2024 ISEP</p>
+        </footer>
+    </div>
+</body>
+</html>
