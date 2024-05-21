@@ -130,37 +130,37 @@
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'main_page' username %}">Home</a></li>
+                    <li><a href="{% url 'main_page' %}">Home</a></li>
                     <li><a href="#">Logout</a></li>
                 </ul>
             </nav>
         </header>
         <main>
             <div class="profile-container">
-                <h2>Modify Profile {{ user_info.age }}</h2>
+                <h2>Modify Profile {{ request.session.user.username }}</h2>
                 <form method="post">
                     {% csrf_token %}
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name" value='{{ user_info.name}}' required>
+                    <input type="text" id="name" name="name" value='{{ request.session.user.name}}' required>
 
                     <label for="surname">Surname</label>
-                    <input type="text" id="surname" name="surname" value="{{ user_info.surname}}" required>
+                    <input type="text" id="surname" name="surname" value="{{ request.session.user.surname}}" required>
 
                     <label for="age">Age</label>
-                    <input type="number" id="age" name="age" value="{{ user_info.age }}" required>
+                    <input type="number" id="age" name="age" value="{{ request.session.user.age }}" required>
 
                     <label for="location">Location</label>
-                    <input type="text" id="location" name="location" value="{{ user_info.location }}" required>
+                    <input type="text" id="location" name="location" value="{{ request.session.user.location }}" required>
 
                     <label for="sex">Sex</label>
                     <select id="sex" name="sex" required>
-                        <option value="Male" {% if user_info.sex == "Male" %}selected{% endif %}>Male</option>
-                        <option value="Female" {% if user_info.sex == "Female" %}selected{% endif %}>Female</option>
-                        <option value="Other" {% if user_info.sex == "Other" %}selected{% endif %}>Other</option>
+                        <option value="Male" {% if request.session.user.sex == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if request.session.user.sex == "Female" %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if request.session.user.sex == "Other" %}selected{% endif %}>Other</option>
                     </select>
 
                     <label for="mail">Email</label>
-                    <input type="email" id="mail" name="mail" value="{{ user_info.mail }}" required>
+                    <input type="email" id="mail" name="mail" value="{{ request.session.user.mail }}" required>
 
                     <button type="submit">Save Changes</button>
                 </form>

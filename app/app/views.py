@@ -57,20 +57,23 @@ def login_view(request):
             p = GDB.get_password_by_username(username)
             print(p)
             if check_password(password, p):
-                return redirect('main_page', username = username)
+                user = GDB.get_user_by_username(username)
+                request.session['user'] = user
+                return redirect('main_page')
             else:
                 return render(request, 'login.html', {'form': form, 'error': 'Invalid username or password'})
     else:
         form = UserLoginForm()
     return render(request, 'login.html', {'form': form})
 
-def main_page(request, username):
+def main_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     # Récupérer les amis de l'utilisateur
-    friends = GDB.get_connected_users(username)
-    return render(request, 'main_page.html', {'username': username, 'friends': friends})
+    friends = GDB.get_connected_users(request.session['username'])
+    return render(request, 'main_page.html')
 
 def deconexion(request):
+    request.session.flush()
     return render(request, 'index.html')
 
 def hash_password(password: str) -> str:
@@ -99,13 +102,12 @@ def is_valid_password(password: str) -> bool:
 
     return True
 
-def profil(request, username):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
-    user_info = GDB.get_user_by_username(username)
-    return render(request, 'profil.html', {'username': username, 'user_info': user_info})
+def profil(request):
+    return render(request, 'profil.html')
 
-def modify_profil(request, username):
+def modify_profil(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
     user_info = GDB.get_user_by_username(username)
     if request.method == 'POST':
         user_info["name"] = request.POST['name']
@@ -117,10 +119,8 @@ def modify_profil(request, username):
 
         GDB.modify_profil(username, user_info["name"], user_info["surname"], user_info["age"], user_info["location"],
                           user_info["sex"], user_info["mail"])
-
-        return redirect('profil', username=username)
-
-    # Mettre à jour les informations de l'utilisateur dans la base de données
-
-
-    return render(request, 'modify_profil.html', {'username': username, 'user_info': user_info})
+        modified_user = GDB.get_user_by_username(username)
+        request.session['user'] = modified_user
+        return redirect('profil')
+    
+    return render(request, 'modify_profil.html')

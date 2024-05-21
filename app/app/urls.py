@@ -26,7 +26,7 @@ urlpatterns = [
     path('', views.index, name='deconnexion'),
     path('create-account/', views.create_account, name='create_account'),
     path('login/', views.login_view, name='login'),
-    path('main-page/<str:username>/', views.main_page, name='main_page'),
-    path('profil/<str:username>/', views.profil, name='profil'),
-    path('modify-profil/<str:username>/', views.modify_profil, name='modify_profil'),
+    path('main-page/', views.main_page, name='main_page'),
+    path('profil/', views.profil, name='profil'),
+    path('modify-profil/', views.modify_profil, name='modify_profil'),
 ]
