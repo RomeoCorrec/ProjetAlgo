@@ -75,3 +75,8 @@ def hash_password(password: str) -> str:
 
 def check_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+def profil(request, username):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    user_info = GDB.get_user_by_username(username)
+    return render(request, 'profil.html', {'username': username, 'user_info': user_info})
