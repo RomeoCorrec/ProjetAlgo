@@ -69,7 +69,8 @@ def login_view(request):
 def main_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     # Récupérer les amis de l'utilisateur
-    friends = GDB.get_connected_users(request.session['username'])
+    friends = GDB.get_connected_users(request.session['user']["username"])
+    print(friends)
     return render(request, 'main_page.html')
 
 def deconexion(request):
@@ -109,6 +110,12 @@ def modify_profil(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     user_info = GDB.get_user_by_username(username)
+    name = user_info["name"]
+    surname = user_info["surname"]
+    age = user_info["age"]
+    location = user_info["location"]
+    sex = user_info["sex"]
+    mail = user_info["mail"]
     if request.method == 'POST':
         user_info["name"] = request.POST['name']
         user_info["surname"] = request.POST['surname']
@@ -122,5 +129,6 @@ def modify_profil(request):
         modified_user = GDB.get_user_by_username(username)
         request.session['user'] = modified_user
         return redirect('profil')
-    
-    return render(request, 'modify_profil.html')
+
+    return render(request, 'modify_profil.html', {"name": name, "surname": surname, "age": age ,
+                                                  "location": location, "sex": sex, "mail": mail})

@@ -141,7 +141,7 @@
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'main_page' username %}">Home</a></li>
+                    <li><a href="{% url 'main_page'%}">Home</a></li>
                     <li><a href="#">Logout</a></li>
                 </ul>
             </nav>
@@ -152,16 +152,16 @@
                 <form method="post">
                     {% csrf_token %}
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name" value='{{ user_info.name}}' required>
+                    <input type="text" id="name" name="name" value="{{name}}" required>
 
                     <label for="surname">Surname</label>
-                    <input type="text" id="surname" name="surname" value="{{ user_info.surname}}" required>
+                    <input type="text" id="surname" name="surname" value="{{ surname}}" required>
 
                     <label for="age">Age</label>
-                    <input type="number" id="age" name="age" value="{{ user_info.age }}" required>
+                    <input type="number" id="age" name="age" value="{{ age }}" required>
 
                     <label for="location">Location</label>
-                    <input type="text" id="location" name="location" value="{{ user_info.location }}" required>
+                    <input type="text" id="location" name="location" value="{{ location }}" required>
 
                     <label for="sex">Sex</label>
                     <select id="sex" name="sex" required>
@@ -171,10 +171,10 @@
                     </select>
 
                     <label for="mail">Email</label>
-                    <input type="email" id="mail" name="mail" value="{{ user_info.mail }}" required>
+                    <input type="email" id="mail" name="mail" value="{{ mail }}" required>
 
                     <button type="submit">Save Changes</button>
-                    <a href="{% url 'profil' username %}" class="back-button">&#8592; Back to Profile</a>
+                    <a href="{% url 'profil'%}" class="back-button">&#8592; Back to Profile</a>
                 </form>
             </div>
         </main>
