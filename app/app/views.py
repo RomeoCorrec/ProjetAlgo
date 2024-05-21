@@ -6,7 +6,8 @@ from .utils import graphDB
 import bcrypt
 import re
 from django.contrib import messages
-
+from .Class.Post import Post
+from django.core.files.storage import FileSystemStorage
 def create_account(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -109,7 +110,24 @@ def is_valid_password(password: str) -> bool:
     return True
 
 def profil(request):
-    return render(request, 'profil.html')
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    posts = GDB.get_posts(username)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        image = request.FILES.get('image') if 'image' in request.FILES else None
+        if image:
+            fs = FileSystemStorage()
+            filename = fs.save(image.name, image)
+            uploaded_file_url = fs.url(filename)
+        else:
+            uploaded_file_url = None
+
+        new_post = Post(content, uploaded_file_url)
+        GDB.add_post(username, new_post)
+        return redirect('profil')
+
+    return render(request, 'profil.html', {'posts': posts})
 
 def modify_profil(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")

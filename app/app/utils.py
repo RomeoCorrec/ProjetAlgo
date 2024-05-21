@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
 from .Class.User import User
-
+import datetime
 
 class graphDB:
     def __init__(self, uri, user, password):
@@ -125,3 +125,29 @@ class graphDB:
             query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail"
             session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail)
         return
+
+    def add_post(self, username, post):
+        date = datetime.datetime.now()
+        with self._driver.session() as session:
+            query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date})"
+            session.run(query_creation, content = post.content, image = post.images, date = date)
+            query_link = "MATCH (a:User {username: $username}) , (b:Post {date: $date}) CREATE (a)-[:POSTED]->(b)"
+            session.run(query_link, username=username, date=date)
+
+    def get_posts(self, username):
+        with self._driver.session() as session:
+            query = """
+            MATCH (a:User {username: $username})-[:POSTED]->(p:Post)
+            RETURN p.content AS content, p.image AS image, p.date AS date
+            ORDER BY p.date DESC
+            """
+            result = session.run(query, username=username)
+            posts = []
+            for record in result:
+                post = {
+                    'content': record['content'],
+                    'image': record['image'],
+                    'date': record['date'],
+                }
+                posts.append(post)
+            return posts

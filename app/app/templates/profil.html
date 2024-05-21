@@ -158,6 +158,39 @@
             background-color: #007bff;
             color: #fff;
         }
+
+        .create-post {
+            margin-bottom: 20px;
+        }
+
+        .create-post form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .create-post textarea {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        .create-post button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .create-post button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -195,26 +228,23 @@
             </section>
             <section class="activities-block">
                 <h2>Activities and Posts</h2>
-                <div class="recent-activity">
-                    <h2>Recent Activity</h2>
-                    <ul>
-                        <!-- Exemple d'activité récente -->
-                        <li>
-                            <img src="" alt="Activity">
-                            <span>Activity Description</span>
-                        </li>
-                        <!-- Ajouter d'autres activités ici -->
-                    </ul>
+                <div class="create-post">
+                    <h2>Create a Post</h2>
+                    <form method="POST" action="{% url 'profil' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <textarea name="content" placeholder="What's on your mind?" required></textarea>
+                        <input type="file" name="image">
+                        <button type="submit">Post</button>
+                    </form>
                 </div>
                 <div class="user-posts">
-                    <h2>Posts</h2>
-                  <!--
-                  <div class="posts">
+                    <h2>Your Posts</h2>
+                    <div class="posts">
                         {% for post in posts %}
                             <div class="post">
                                 <p>{{ post.content }}</p>
                                 {% if post.image %}
-                                    <img src="{{ post.image.url }}" alt="Post Image">
+                                    <img src="{{post.image}}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>
@@ -224,7 +254,6 @@
                             </div>
                         {% endfor %}
                     </div>
-                    -->
                 </div>
             </section>
         </main>
