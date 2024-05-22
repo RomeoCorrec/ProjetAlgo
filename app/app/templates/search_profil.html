@@ -168,7 +168,7 @@
                 <ul>
                     <li><a href="{% url 'main_page' %}">Home</a></li>
                     <li><span>{{ request.session.user.username }}</span></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
             </nav>
         </header>
@@ -182,6 +182,13 @@
                     <p><strong>Sex:</strong> <span>{{ sex }}</span></p>
                     <p><strong>Email:</strong> <span>{{ mail }}</span></p>
                 </div>
+                {% if show_button %}
+                    <form method="POST" action="{% url 'send_friend_request' %}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <input type="hidden" name="to_user" value="{{ username }}">
+                        <button type="submit" class="button">Add Friend</button>
+                    </form>
+                {% endif %}
                 <div class="friends">
                     <h2>Friends</h2>
                     <ul>
@@ -207,15 +214,14 @@
                         <!-- Ajouter d'autres activités ici -->
                     </ul>
                 </div>
-                <div class="user-posts">
-                    <h2>Posts</h2>
-                  <!--
-                  <div class="posts">
+                 <div class="user-posts">
+                    <h2>{{ username }}'s Posts</h2>
+                    <div class="posts">
                         {% for post in posts %}
                             <div class="post">
                                 <p>{{ post.content }}</p>
                                 {% if post.image %}
-                                    <img src="{{ post.image.url }}" alt="Post Image">
+                                    <img src="{{post.image}}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>
@@ -225,7 +231,6 @@
                             </div>
                         {% endfor %}
                     </div>
-                    -->
                 </div>
             </section>
         </main>

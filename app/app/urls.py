@@ -29,5 +29,7 @@ urlpatterns = [
     path('main-page/', views.main_page, name='main_page'),
     path('profil/', views.profil, name='profil'),
     path('modify-profil/', views.modify_profil, name='modify_profil'),
-    path('search-profil/', views.search_profil, name='search_profil')
+    path('search-profil/', views.search_profil, name='search_profil'),
+    path('send_friend_request/', views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request')
 ]

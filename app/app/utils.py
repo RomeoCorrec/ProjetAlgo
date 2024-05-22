@@ -28,8 +28,8 @@ class graphDB:
 
     def get_connected_users(self, user_name):
         with self._driver.session() as session:
-            result = session.run("MATCH (u:User {username: $user_name})-[:FRIEND]->(v:User) WHERE NOT u = v RETURN v.name AS name", user_name=user_name)
-            connected_users = [row['name'] for row in result]
+            result = session.run("MATCH (u:User {username: $user_name})-[:FRIEND]->(v:User) WHERE NOT u = v RETURN v.username AS username", user_name=user_name)
+            connected_users = [row['username'] for row in result]
         return connected_users
 
     def get_user_by_name(self, user_name):
@@ -105,13 +105,23 @@ class graphDB:
             query = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND_REQUEST]->(b)"
             session.run(query, sender=sender, receiver=receiver)
 
+    def has_send_friend_request(self, sender, receiver):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (a:User {username: $sender})-[:FRIEND_REQUEST]->(b:User {username: $receiver}) RETURN b""", sender=sender, receiver=receiver)
+            return result.single() is not None
+
+    def is_friend(self, sender, receiver):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (a:User {username: $sender})-[:FRIEND]->(b:User {username: $receiver}) RETURN b""", sender=sender, receiver=receiver)
+            return result.single() is not None
+
     def accept_friend_request(self, sender, receiver):
         with self._driver.session() as session:
             query = "MATCH (a:User {username: $sender})-[r:FRIEND_REQUEST]->(b:User {username: $receiver}) DELETE r"
             session.run(query, sender=sender, receiver=receiver)
-            query = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND]->(b)"
+            query1 = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND]->(b)"
             query2 = "MATCH (a:User {username: $sender}), (b:User {username: $receiver}) CREATE (a)-[:FRIEND]->(b)"
-            session.run(query, sender=sender, receiver=receiver)
+            session.run(query1, sender=sender, receiver=receiver)
             session.run(query2, sender=receiver, receiver=sender)
 
     def get_friends_requests(self, username):
@@ -119,6 +129,18 @@ class graphDB:
             result = session.run("""MATCH (a:User {username: $username})<-[r:FRIEND_REQUEST]-(b:User) RETURN b.username as username""", username=username)
             friends_requests = [row['username'] for row in result]
         return friends_requests
+
+    def delete_friend_request(self, sender, receiver):
+        with self._driver.session() as session:
+            query = "MATCH (a:User {username: $sender})-[r:FRIEND_REQUEST]->(b:User {username: $receiver}) DELETE r"
+            session.run(query, sender=sender, receiver=receiver)
+
+    def delete_friendship(self, sender, receiver):
+        with self._driver.session() as session:
+            query = "MATCH (a:User {username: $sender})-[r:FRIEND]->(b:User {username: $receiver}) DELETE r"
+            session.run(query, sender=sender, receiver=receiver)
+            query = "MATCH (a:User {username: $sender})-[r:FRIEND]->(b:User {username: $receiver}) DELETE r"
+            session.run(query, sender=receiver, receiver=sender)
 
     def modify_profil(self, username, name, surname, age, location, sex, mail):
         with self._driver.session() as session:
