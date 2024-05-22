@@ -193,7 +193,11 @@
                 <h2>Messages</h2>
                 <!-- Messagerie privée et groupée -->
                 <div class="messaging">
-                    <button onclick="">Private Messages</button>
+                    <form method = "POST" action="{% url 'private_message_list'%}">
+                        {% csrf_token %}
+                        <button type="submit">Private Messages</button>
+                    </form>
+
                     <button onclick="">Group Messages</button>
                 </div>
                 <h2>Profile</h2>

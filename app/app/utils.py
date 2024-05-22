@@ -173,3 +173,51 @@ class graphDB:
                 }
                 posts.append(post)
             return posts
+
+    def get_friends(self, username):
+        with self._driver.session() as session:
+            query = "MATCH (u:User {username: $username})-[:FRIEND]->(friend) RETURN friend.username AS friend_username"
+            result = session.run(query, username=username)
+            friends = [row['friend_username'] for row in result]
+            return friends
+
+    def create_discussion(self, user1, user2):
+        with self._driver.session() as session:
+            query = (
+                "CREATE (d:Discussion {user1: $user1, user2: $user2}) "
+                "RETURN d"
+            )
+            session.run(query, user1=user1, user2=user2)
+
+    def create_message(self, sender, receiver, content):
+        with self._driver.session() as session:
+            # Création du message
+            query_create_message = (
+                "MATCH (d:Discussion {user1: $sender, user2: $receiver}) "
+                "CREATE (m:Message {sender: $sender, receiver: $receiver, content: $content, timestamp: datetime()}) "
+                "MERGE (d)-[:CONTAIN]->(m)"
+            )
+            session.run(query_create_message, sender=sender, receiver=receiver, content=content)
+
+    def check_discussion(self, username1, username2):
+        with self._driver.session() as session:
+            query = (
+                "MATCH (d:Discussion) WHERE (d.user1 = $username1 AND d.user2 = $username2) OR (d.user1 = $username2 AND d.user2 = $username1) RETURN COUNT(d) AS count"
+            )
+            result = session.run(query, username1=username1, username2=username2)
+            record = result.single()
+            count = record["count"] if record else 0
+            return count > 0
+
+    def get_messages(self, username1, username2):
+        with self._driver.session() as session:
+            query = """
+            MATCH (d:Discussion)
+            WHERE (d.user1 = $username1 AND d.user2 = $username2) OR (d.user1 = $username2 AND d.user2 = $username1)
+            MATCH (d)-[:CONTAIN]-(m:Message)
+            RETURN m.content AS content, m.timestamp AS timestamp, m.sender AS sender
+            ORDER BY m.timestamp
+            """
+            result = session.run(query, username1=username1, username2=username2)
+            messages = [{"sender": row["sender"], "content": row["content"], "timestamp": row["timestamp"]} for row in result]
+            return messages

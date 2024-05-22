@@ -113,6 +113,7 @@ def profil(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     posts = GDB.get_posts(username)
+    friends = GDB.get_friends(username)
     if request.method == 'POST':
         content = request.POST.get('content')
         image = request.FILES.get('image') if 'image' in request.FILES else None
@@ -127,7 +128,7 @@ def profil(request):
         GDB.add_post(username, new_post)
         return redirect('profil')
 
-    return render(request, 'profil.html', {'posts': posts})
+    return render(request, 'profil.html', {'posts': posts, 'friends': friends})
 
 def modify_profil(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
@@ -194,3 +195,36 @@ def accept_friend_request(request):
     receiver = request.session['user']['username']
     GDB.accept_friend_request(sender, receiver)
     return redirect('main_page')
+
+def private_messages_list(request):
+    username = request.session['user']['username']
+    print(username)
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if username:
+        friends = GDB.get_friends(username)
+        return render(request, 'private_message_list.html', {'friends': friends})
+    else:
+        return render(request, 'login.html')
+
+def private_messages(request):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if request.method == 'POST':
+        friend_username = request.POST.get('friend_name')
+        content_message = request.POST.get('send_message')
+        if content_message:
+            friend_username = request.POST.get('friend_name')
+            GDB.create_message(username,friend_username, content_message)
+            messages = GDB.get_messages(username, friend_username)
+            print(friend_username)
+            print(messages)
+            return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
+
+        if friend_username:
+            if(GDB.check_discussion(username, friend_username)):
+                messages = GDB.get_messages(username, friend_username)
+                return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
+            else:
+                GDB.create_discussion(username, friend_username)
+                return render(request, 'private_message.html', {'friend_username': friend_username})
+    return render(request, 'private_message.html')

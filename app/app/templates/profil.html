@@ -191,6 +191,20 @@
         .create-post button:hover {
             background-color: #0056b3;
         }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -218,10 +232,15 @@
                     <h2>Friends</h2>
                     <ul>
                         <!-- Exemple d'ami -->
+                        {% for friend in friends %}
                         <li>
-                            <img src="" alt="Friend">
-                            <span>Friend Name</span>
+                            <form method="POST" action="{% url 'search_profil'%}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ friend}}" required>
+                                <button type="submit">{{ friend}}</button>
+                             </form>
                         </li>
+                        {% endfor %}
                         <!-- Ajouter d'autres amis ici -->
                     </ul>
                 </div>
