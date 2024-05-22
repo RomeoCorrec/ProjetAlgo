@@ -56,21 +56,33 @@
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding-top: 20px;
+            align-items: flex-start;
+            padding: 20px;
         }
 
         .content {
-            width: 80%;
+            width: 100%;
             max-width: 800px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
         }
 
         h2 {
             text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
         }
 
         .messages {
@@ -81,33 +93,42 @@
 
         .message {
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .message .sender {
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .message .timestamp {
             color: #999;
             font-size: 12px;
+            margin-bottom: 5px;
         }
 
         .message .text {
-            margin-top: 5px;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .input-container {
-            margin-top: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
         }
 
-        .input-container input[type="text"] {
-            width: 80%;
+        .input-container textarea {
+            width: 100%;
             max-width: 600px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-bottom: 10px;
+            resize: none;
         }
 
         .input-container button {
@@ -116,7 +137,6 @@
             border: none;
             border-radius: 5px;
             padding: 10px 20px;
-            margin-left: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -141,29 +161,31 @@
         <nav>
             <ul>
                 <li><a href="{% url 'main_page' %}">Home</a></li>
-                <li><a href="#">Messages</a></li>
+                <li><a href="{% url 'private_message_list' %}">Messages</a></li>
                 <li><a href="#">Logout</a></li>
             </ul>
         </nav>
     </header>
     <div class="container">
         <div class="content">
-            <h2>Discussion with {{friend_username}}</h2>
-            <ul class="messages">
-                {% for message in messages %}
-                <li class="message">
-                    <span class="sender">{{message.sender}}</span>
-                    <span class="timestamp">[{{message.timestamp}}]</span>
-                    <div class="text">{{message.content}}</div>
-                </li>
-                {% endfor %}
-            </ul>
+            <h2>Discussion with {{ friend_username }}</h2>
+            <div id="messages-container" class="messages-container">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li class="message">
+                        <span class="sender">{{ message.sender }}</span>
+                        <span class="timestamp">[{{ message.timestamp }}]</span>
+                        <div class="text">{{ message.content }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
             <div class="input-container">
-                <form method="POST" action="{% url 'private_message'%}">
+                <form method="POST" action="{% url 'private_message' %}">
                     {% csrf_token %}
                     <input type="hidden" name="friend_name" value="{{ friend_username }}">
                     <textarea name="send_message" rows="4" cols="50" required></textarea>
-                    <button type="submit" >Send</button>
+                    <button type="submit">Send</button>
                 </form>
             </div>
         </div>
@@ -171,5 +193,12 @@
     <footer>
         <p>&copy; 2024 ISEP</p>
     </footer>
+    <script>
+        // JavaScript pour défiler automatiquement jusqu'en bas du conteneur des messages
+        window.onload = function() {
+            var messagesContainer = document.getElementById('messages-container');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+    </script>
 </body>
 </html>

@@ -11,6 +11,7 @@
             background-color: #f4f7f6;
             margin: 0;
             padding: 0;
+            color: #333;
         }
 
         .container {
@@ -69,7 +70,7 @@
             flex: 1;
             padding: 20px;
             background-color: #fff;
-            border-radius: 5px;
+            border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             margin: 10px;
@@ -79,6 +80,7 @@
             text-align: center;
             color: #333;
             margin-bottom: 20px;
+            font-size: 24px;
         }
 
         .profile-details p {
@@ -95,12 +97,54 @@
             color: #007bff;
         }
 
-        .posts .post {
+        .friends, .user-posts, .create-post {
+            margin-bottom: 20px;
+        }
+
+        .friends h2, .user-posts h2, .create-post h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .friends ul, .user-posts .posts {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .friends li, .posts .post {
             background-color: #f9f9f9;
             padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .friends li img {
+            border-radius: 50%;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .friends li span {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .posts .post {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .posts .post img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
         }
 
         .post-meta {
@@ -112,6 +156,7 @@
 
         .post-meta span {
             font-size: 14px;
+            color: #777;
         }
 
         .post-meta button {
@@ -126,43 +171,6 @@
             color: #0056b3;
         }
 
-        .friends ul, .recent-activity ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .friends li, .recent-activity li {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .friends li img, .recent-activity li img {
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .friends li span, .recent-activity li span {
-            font-size: 16px;
-            color: #555;
-        }
-
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .create-post {
-            margin-bottom: 20px;
-        }
-
         .create-post form {
             display: flex;
             flex-direction: column;
@@ -172,7 +180,7 @@
         .create-post textarea {
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 5px;
             resize: vertical;
         }
@@ -191,6 +199,7 @@
         .create-post button:hover {
             background-color: #0056b3;
         }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -204,6 +213,13 @@
 
         .button:hover {
             background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #007bff;
+            color: #fff;
         }
     </style>
 </head>
@@ -231,17 +247,15 @@
                 <div class="friends">
                     <h2>Friends</h2>
                     <ul>
-                        <!-- Exemple d'ami -->
                         {% for friend in friends %}
                         <li>
-                            <form method="POST" action="{% url 'search_profil'%}">
+                            <form method="POST" action="{% url 'search_profil' %}">
                                 {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ friend}}" required>
-                                <button type="submit">{{ friend}}</button>
-                             </form>
+                                <input type="hidden" name="search_query" value="{{ friend }}" required>
+                                <button type="submit" class="button">{{ friend }}</button>
+                            </form>
                         </li>
                         {% endfor %}
-                        <!-- Ajouter d'autres amis ici -->
                     </ul>
                 </div>
             </section>
@@ -263,7 +277,7 @@
                             <div class="post">
                                 <p>{{ post.content }}</p>
                                 {% if post.image %}
-                                    <img src="{{post.image}}" alt="Post Image">
+                                    <img src="{{ post.image }}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>

@@ -193,7 +193,7 @@ class graphDB:
         with self._driver.session() as session:
             # Création du message
             query_create_message = (
-                "MATCH (d:Discussion {user1: $sender, user2: $receiver}) "
+                "MATCH (d:Discussion) WHERE (d.user1 = $sender AND d.user2 = $receiver) OR (d.user1 = $receiver AND d.user2 = $sender) "
                 "CREATE (m:Message {sender: $sender, receiver: $receiver, content: $content, timestamp: datetime()}) "
                 "MERGE (d)-[:CONTAIN]->(m)"
             )
