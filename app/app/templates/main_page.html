@@ -139,9 +139,32 @@
         <main>
             <aside class="sidebar-left">
                 <h2>Friends</h2>
-                <!-- Gestion des amis -->
+                <!-- Liste des amis -->
+                <div class="friends">
+                    <ul>
+                        {% for friend in friends %}
+                        <li>
+                            <form method="POST" action="{% url 'search_profil'%}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ friend}}" required>
+                                <button type="submit">{{ friend}}</button>
+                             </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 <div class="friends-management">
-                    <button >Manage Friends</button>
+                    <h2>Friends requests</h2>
+                    <!-- Liste des demandes d'amis -->
+                        {% for friend_request in friends_requests %}
+                        <div class="friend-requests">
+                            <p>{{ friend_request }}</p>
+                            <form method="POST" action="{% url 'accept_friend_request' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="friend_name" value="{{ friend_request }}">
+                                <button type="submit">Accept</button>
+                            </form>
+                        </div>
+                        {% endfor %}
                 </div>
                 <h2>Search Profiles</h2>
                 <!-- Recherche de profils -->
