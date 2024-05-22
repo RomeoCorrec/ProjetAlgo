@@ -121,6 +121,89 @@
         background-color: #0056b3;
     }
 
+    .posts .post {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .post-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .post-meta span {
+        font-size: 14px;
+    }
+
+    .post-meta button {
+        background-color: transparent;
+        color: #007bff;
+        border: none;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .post-meta button:hover {
+        color: #0056b3;
+    }
+
+    .feed {
+        flex: 3;
+        padding: 20px;
+        background-color: #fff;
+        margin: 0 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .posts-container {
+        max-height: 375px; /* Ajoutez une hauteur maximale selon vos besoins */
+        overflow-y: scroll; /* Affiche une barre de défilement verticale si nécessaire */
+    }
+
+    .post {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .tab-button {
+    width: 50%;
+    padding: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    background: #f9f9f9;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked + label {
+    border-bottom: 3px solid #007bff;
+    font-weight: bold;
+    color: #007bff;
+    background-color: #ffffff;
+}
+
+.tab-content {
+    display: none;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2 {
+    display: block;
+}
 
  </style>
 </head>
@@ -184,11 +267,37 @@
             </aside>
             <section class="feed">
                 <h2>Posts</h2>
-                <!-- Fil de posts -->
-                <div class="posts-feed">
-                    <!-- Les posts seront chargés ici -->
+                <div class="posts-tabs">
+                    <input type="radio" id="tab1" name="tabs" checked>
+                    <label for="tab1" class="tab-button">Friends' posts</label>
+
+                    <input type="radio" id="tab2" name="tabs">
+                    <label for="tab2" class="tab-button">Recommended posts</label>
+                    <div class="tab-content" id="content1">
+                        <section class="feed">
+                            <div class="posts-container">
+                                {% for post in posts %}
+                                <div class="post">
+                                    <p>Par : {{ post.author}}</p>
+                                    <p>{{ post.content }}</p>
+                                    {% if post.image %}
+                                        <img src="{{ post.image }}" alt="Post Image">
+                                    {% endif %}
+                                    <div class="post-meta">
+                                        <span>{{ post.number_like }} Likes</span>
+                                        <button>Like</button>
+                                        <button>Comment</button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content" id="content2">
+                        <h2>Recommended posts</h2>
+                    </div>
                 </div>
-            </section>
+        </section>
             <aside class="sidebar-right">
                 <h2>Messages</h2>
                 <!-- Messagerie privée et groupée -->
