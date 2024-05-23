@@ -113,6 +113,25 @@
             padding: 10px;
             border-radius: 5px;
         }
+        .message.sent {
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .message.sent .text {
+            background-color: #007bff;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .message.received .text {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+
+        .message.received {
+            align-self: flex-start;
+        }
 
         .input-container {
             display: flex;
@@ -172,7 +191,7 @@
             <div id="messages-container" class="messages-container">
                 <ul class="messages">
                     {% for message in messages %}
-                    <li class="message">
+                    <li class="message {% if message.sender == request.session.user.username %}sent{% else %}received{% endif %}">
                         <span class="sender">{{ message.sender }}</span>
                         <span class="timestamp">[{{ message.timestamp }}]</span>
                         <div class="text">{{ message.content }}</div>
@@ -181,7 +200,7 @@
                 </ul>
             </div>
             <div class="input-container">
-                <form method="POST" action="{% url 'private_message' %}">
+                <form method="POST" action="{% url 'send_private_messages' %}">
                     {% csrf_token %}
                     <input type="hidden" name="friend_name" value="{{ friend_username }}">
                     <textarea name="send_message" rows="4" cols="50" required></textarea>
