@@ -229,7 +229,13 @@ def private_messages_list(request):
     else:
         return render(request, 'login.html')
 
-def private_messages(request):
+def private_messages_page(request, friend_username):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    messages = GDB.get_messages(username, friend_username)
+    return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
+
+def send_private_messages(request):
     username = request.session['user']['username']
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     if request.method == 'POST':
@@ -239,18 +245,8 @@ def private_messages(request):
             friend_username = request.POST.get('friend_name')
             GDB.create_message(username,friend_username, content_message)
             messages = GDB.get_messages(username, friend_username)
-            print(friend_username)
-            print(messages)
-            return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
-
-        if friend_username:
-            if(GDB.check_discussion(username, friend_username)):
-                messages = GDB.get_messages(username, friend_username)
-                return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
-            else:
-                GDB.create_discussion(username, friend_username)
-                return render(request, 'private_message.html', {'friend_username': friend_username})
-    return render(request, 'private_message.html')
+            return redirect('private_message_page', friend_username=friend_username)
+    return redirect('private_message_page', friend_username=friend_username)
 
 
 def add_comment(request, post_id):

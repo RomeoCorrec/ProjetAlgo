@@ -141,7 +141,7 @@
                     <li>
                         <div class="friend-info">
                             <span>{{ friend }}</span>
-                            <form method="POST" action="{% url 'private_message' %}">
+                            <form method="POST" action="{% url 'private_message_page' friend %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="friend_name" value="{{ friend}}">
                                 <button class = "btn-discuter" type="submit">Discuss</button>

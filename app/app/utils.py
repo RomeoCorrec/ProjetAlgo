@@ -209,6 +209,14 @@ class graphDB:
             )
             session.run(query, user1=user1, user2=user2)
 
+    def delete_discussion_and_messages(self, user1, user2):
+        with self._driver.session() as session:
+            query = (
+                "MATCH (d:Discussion) WHERE (d.user1 = $user1 AND d.user2 = $user2) OR (d.user1 = $user2 AND d.user2 = $user1) "
+                "DETACH DELETE d"
+            )
+            session.run(query, user1=user1, user2=user2)
+
     def create_message(self, sender, receiver, content):
         with self._driver.session() as session:
             # Création du message
@@ -219,6 +227,13 @@ class graphDB:
             )
             session.run(query_create_message, sender=sender, receiver=receiver, content=content)
 
+    def delete_messages(self, sender, receiver):
+        with self._driver.session() as session:
+            query = (
+                "MATCH (m:Message) WHERE (m.sender = $sender AND m.receiver = $receiver) OR (m.sender = $receiver AND m.receiver = $sender)"
+                "DETACH DELETE m"
+            )
+            session.run(query, sender=sender, receiver=receiver)
     def check_discussion(self, username1, username2):
         with self._driver.session() as session:
             query = (
