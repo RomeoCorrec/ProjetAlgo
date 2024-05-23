@@ -205,12 +205,13 @@ def visit_profil(request, username):
     return render(request, 'search_profil.html', {"username": username, "name": name, "surname": surname, "age": age,
                                                   "location": location, "sex": sex, "mail": mail, "posts": posts,
                                                   "show_button": show_button})
+
 def send_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     sender = request.session['user']['username']
     receiver = request.POST['to_user']
     GDB.add_new_friend_request(sender, receiver)
-    return redirect('search_profil')
+    return redirect('main_page')
 
 def accept_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")

@@ -151,8 +151,8 @@ class graphDB:
     def add_post(self, username, post):
         date = datetime.datetime.now()
         with self._driver.session() as session:
-            query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date})"
-            session.run(query_creation, content = post.content, image = post.images, date = date)
+            query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date, author: $username})"
+            session.run(query_creation, content = post.content, image = post.images, date = date, username = username)
             query_link = "MATCH (a:User {username: $username}) , (b:Post {date: $date}) CREATE (a)-[:POSTED]->(b)"
             session.run(query_link, username=username, date=date)
 
@@ -160,7 +160,7 @@ class graphDB:
         with self._driver.session() as session:
             query = """
             MATCH (a:User {username: $username})-[:POSTED]->(p:Post)
-            RETURN p.content AS content, p.image AS image, p.date AS date, id(p) AS id
+            RETURN p.content AS content, p.image AS image, p.date AS date, p.author AS author, id(p) AS id
             ORDER BY p.date DESC
             """
             result = session.run(query, username=username)
@@ -170,9 +170,11 @@ class graphDB:
                     'content': record['content'],
                     'image': record['image'],
                     'date': record['date'],
+                    'author': record['author'],
                     'id': record['id']
                 }
                 posts.append(post)
+            print(posts)
             return posts
 
     def get_friends_posts(self, username):
@@ -180,8 +182,6 @@ class graphDB:
         posts = []
         for friend in friends:
             posts += self.get_posts(friend)
-            for post in posts:
-                post['author'] = friend
         return posts
 
     def get_recommendations_posts(self, username):
@@ -190,9 +190,12 @@ class graphDB:
             posts = []
             for friend in commun_friends:
                 posts += self.get_posts(friend)
-                for post in posts:
-                    post['author'] = friend
             return posts
+
+    def delete_post(self, post_id):
+        with self._driver.session() as session:
+            query = "MATCH (p:Post) WHERE id(p) = $post_id DETACH DELETE p"
+            session.run(query, post_id=post_id)
 
     def get_friends(self, username):
         with self._driver.session() as session:
@@ -262,6 +265,7 @@ class graphDB:
             query = "MATCH (p:Post) WHERE id(p) = $id RETURN p"
             post = session.run(query, id = id).single()
             return post["p"]
+
     def create_comment(self, post_id:int, content:str, username):
         with self._driver.session() as session:
             query = """MATCH (p:Post) WHERE id(p) = $post_id
