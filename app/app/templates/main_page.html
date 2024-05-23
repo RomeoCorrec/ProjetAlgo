@@ -121,6 +121,19 @@
         background-color: #0056b3;
     }
 
+    .visit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        font-size: 16px;
+    }
+
+    .visit-button:hover {
+        background-color: #0056b3;
+    }
     .posts .post {
         background-color: #f9f9f9;
         padding: 15px;
@@ -165,7 +178,7 @@
         overflow-y: scroll; /* Affiche une barre de défilement verticale si nécessaire */
     }
 
-    .post {
+ .post {
         background-color: #f9f9f9;
         padding: 15px;
         border: 1px solid #ccc;
@@ -173,7 +186,7 @@
         margin-bottom: 15px;
     }
 
-    .tab-button {
+ .tab-button {
     width: 50%;
     padding: 10px 0;
     text-align: center;
@@ -183,6 +196,7 @@
     transition: all 0.3s ease;
     box-sizing: border-box;
 }
+
 input[type="radio"] {
     display: none;
 }
@@ -203,6 +217,12 @@ input[type="radio"]:checked + label {
 #tab1:checked ~ #content1,
 #tab2:checked ~ #content2 {
     display: block;
+}
+
+.credit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
  </style>
@@ -274,11 +294,31 @@ input[type="radio"]:checked + label {
                     <input type="radio" id="tab2" name="tabs">
                     <label for="tab2" class="tab-button">Recommended posts</label>
                     <div class="tab-content" id="content1">
-                        <section class="feed">
+                        <div class="posts-container">
+                            {% for post in friends_posts %}
+                            <div class="post">
+                                <p>Par : {{ post.author}}</p>
+                                <p>{{ post.content }}</p>
+                                {% if post.image %}
+                                <img src="{{ post.image }}" alt="Post Image">
+                                {% endif %}
+                                <div class="post-meta">
+                                    <span>{{ post.number_like }} Likes</span>
+                                    <button>Like</button>
+                                    <button>Comment</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="tab-content" id="content2">
                             <div class="posts-container">
-                                {% for post in posts %}
+                                {% for post in recommended_posts %}
                                 <div class="post">
-                                    <p>Par : {{ post.author}}</p>
+                                    <div class="credit">
+                                        <p>Par : {{ post.author}}</p>
+                                        <a href="{% url 'visit_profil' post.author %}" class="visit-button">Visit Profile</a>
+                                    </div>
                                     <p>{{ post.content }}</p>
                                     {% if post.image %}
                                         <img src="{{ post.image }}" alt="Post Image">
@@ -291,10 +331,6 @@ input[type="radio"]:checked + label {
                                 </div>
                                 {% endfor %}
                             </div>
-                        </section>
-                    </div>
-                    <div class="tab-content" id="content2">
-                        <h2>Recommended posts</h2>
                     </div>
                 </div>
         </section>

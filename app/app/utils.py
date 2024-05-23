@@ -41,11 +41,11 @@ class graphDB:
     def find_common_friends(self, user_name):
         with self._driver.session() as session:
             result = session.run("""
-                MATCH (u:User {name: $user_name})-[:KNOWS]->(common:User)<-[:KNOWS]-(v:User)
+                MATCH (u:User {username: $user_name})-[:FRIEND]->(common:User)<-[:FRIEND]-(v:User)
                 WHERE NOT (u)-[:KNOWS]->(v)
-                RETURN v.name AS name
+                RETURN v.username AS username
             """, user_name=user_name)
-            common_friends = [row['name'] for row in result]
+            common_friends = [row['username'] for row in result]
         return common_friends
 
     def get_all_users(self):
@@ -172,6 +172,25 @@ class graphDB:
                     'date': record['date'],
                 }
                 posts.append(post)
+            return posts
+
+    def get_friends_posts(self, username):
+        friends = self.get_friends(username)
+        posts = []
+        for friend in friends:
+            posts += self.get_posts(friend)
+            for post in posts:
+                post['author'] = friend
+        return posts
+
+    def get_recommendations_posts(self, username):
+        with self._driver.session() as session:
+            commun_friends = self.find_common_friends(username)
+            posts = []
+            for friend in commun_friends:
+                posts += self.get_posts(friend)
+                for post in posts:
+                    post['author'] = friend
             return posts
 
     def get_friends(self, username):

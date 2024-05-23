@@ -3,4 +3,4 @@ from ProjetAlgo.app.app.utils import graphDB
 
 GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
 
-print(GDB.get_posts("ROMEGA"))
+print(GDB.get_recommendations_posts("Remi"))

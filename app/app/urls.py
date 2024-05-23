@@ -33,5 +33,6 @@ urlpatterns = [
     path('send_friend_request/', views.send_friend_request, name='send_friend_request'),
     path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
     path('private-message-list/', views.private_messages_list, name='private_message_list'),
-    path('private-message/', views.private_messages, name='private_message')
+    path('private-message/', views.private_messages, name='private_message'),
+    path('visit-profil/<str:username>', views.visit_profil, name='visit_profil')
 ]

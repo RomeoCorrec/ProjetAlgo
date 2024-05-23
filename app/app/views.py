@@ -69,15 +69,10 @@ def main_page(request):
     # Récupérer les amis de l'utilisateur
     friends = GDB.get_connected_users(request.session['user']["username"])
     friends_requests = GDB.get_friends_requests(request.session['user']["username"])
-    posts = []
-    if friends:
-        for friend in friends:
-            post = GDB.get_posts(friend)
-            for p in post:
-                p['author'] = friend
-                posts.append(p)
-    sorted_posts = sorted(posts, key=lambda x: x['date'], reverse=True)
-    print(posts)
+    friends_posts = GDB.get_friends_posts(request.session['user']["username"])
+    recommended_posts = GDB.get_recommendations_posts(request.session['user']["username"])
+    sorted_friends_posts = sorted(friends_posts, key=lambda x: x['date'], reverse=True)
+    sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
 
     if request.method == 'POST':
         search_query = request.POST.get('search_query', '')
@@ -85,7 +80,7 @@ def main_page(request):
             return redirect('search_profil', username=search_query)
     return render(request,
                   'main_page.html',
-                  {'friends': friends, 'friends_requests': friends_requests, 'posts': sorted_posts})
+                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': sorted_friends_posts, 'recommended_posts': sorted_recommended_posts})
 
 def deconexion(request):
     request.session.flush()
@@ -190,6 +185,22 @@ def search_profil(request, username=None):
                 return redirect('search_profil')
     return render(request, 'main_page.html')
 
+def visit_profil(request, username):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    user_info = GDB.get_user_by_username(username)
+    name = user_info["name"]
+    surname = user_info["surname"]
+    age = user_info["age"]
+    location = user_info["location"]
+    sex = user_info["sex"]
+    mail = user_info["mail"]
+    posts = GDB.get_posts(username)
+    is_friend = GDB.is_friend(request.session['user']['username'], username)
+    is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
+    show_button = not (is_friend or is_friend_request)
+    return render(request, 'search_profil.html', {"username": username, "name": name, "surname": surname, "age": age,
+                                                  "location": location, "sex": sex, "mail": mail, "posts": posts,
+                                                  "show_button": show_button})
 def send_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     sender = request.session['user']['username']
