@@ -295,7 +295,7 @@ input[type="radio"]:checked + label {
                     <label for="tab2" class="tab-button">Recommended posts</label>
                     <div class="tab-content" id="content1">
                         <div class="posts-container">
-                            {% for post in friends_posts %}
+                            {% for post, post_id in friends_posts %}
                             <div class="post">
                                 <p>Par : {{ post.author}}</p>
                                 <p>{{ post.content }}</p>
@@ -305,7 +305,9 @@ input[type="radio"]:checked + label {
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>
                                     <button>Like</button>
-                                    <button>Comment</button>
+                                    <form method="GET" action="{% url 'add_comment' post_id %}">
+                                         <button type="submit">Comment</button>
+                                    </form>
                                 </div>
                             </div>
                             {% endfor %}

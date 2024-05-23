@@ -73,14 +73,18 @@ def main_page(request):
     recommended_posts = GDB.get_recommendations_posts(request.session['user']["username"])
     sorted_friends_posts = sorted(friends_posts, key=lambda x: x['date'], reverse=True)
     sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
-
+    post_id = []
+    for post in friends_posts:
+        post_id.append(post["id"])
+    friends_posts_with_ids = zip(sorted_friends_posts, post_id)
+    print(post_id)
     if request.method == 'POST':
         search_query = request.POST.get('search_query', '')
         if search_query:
             return redirect('search_profil', username=search_query)
     return render(request,
                   'main_page.html',
-                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': sorted_friends_posts, 'recommended_posts': sorted_recommended_posts})
+                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
 
 def deconexion(request):
     request.session.flush()
@@ -247,3 +251,21 @@ def private_messages(request):
                 GDB.create_discussion(username, friend_username)
                 return render(request, 'private_message.html', {'friend_username': friend_username})
     return render(request, 'private_message.html')
+
+
+def add_comment(request, post_id):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    post = GDB.get_post_by_id(post_id)
+    comments = GDB.get_comments(post_id)
+    print(comments)
+    username = request.session['user']['username']
+    print(post.element_id)
+    post_id = int(post.element_id.split(':')[-1])
+    print(post_id)
+    if request.method == 'POST':
+        content = request.POST.get('comment_content')
+        if content:
+            GDB.create_comment(post_id, content, username)
+            return redirect('add_comment', post_id=post_id)
+
+    return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id})

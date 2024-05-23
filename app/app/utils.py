@@ -160,7 +160,7 @@ class graphDB:
         with self._driver.session() as session:
             query = """
             MATCH (a:User {username: $username})-[:POSTED]->(p:Post)
-            RETURN p.content AS content, p.image AS image, p.date AS date
+            RETURN p.content AS content, p.image AS image, p.date AS date, id(p) AS id
             ORDER BY p.date DESC
             """
             result = session.run(query, username=username)
@@ -170,6 +170,7 @@ class graphDB:
                     'content': record['content'],
                     'image': record['image'],
                     'date': record['date'],
+                    'id': record['id']
                 }
                 posts.append(post)
             return posts
@@ -240,3 +241,26 @@ class graphDB:
             result = session.run(query, username1=username1, username2=username2)
             messages = [{"sender": row["sender"], "content": row["content"], "timestamp": row["timestamp"]} for row in result]
             return messages
+
+    def get_post_by_id(self, id:int):
+        with self._driver.session() as session:
+            query = "MATCH (p:Post) WHERE id(p) = $id RETURN p"
+            post = session.run(query, id = id).single()
+            return post["p"]
+    def create_comment(self, post_id:int, content:str, username):
+        with self._driver.session() as session:
+            query = """MATCH (p:Post) WHERE id(p) = $post_id
+            CREATE (c:Comment {username: $username, date: $date, content: $content})
+            CREATE (c)-[:ABOUT]->(p)
+            RETURN c, p"""
+            date = datetime.datetime.now()
+            session.run(query, post_id = post_id, date = date, username = username, content = content)
+
+    def get_comments(self, post_id: int):
+        with self._driver.session() as session:
+            query = """MATCH (p:Post) WHERE id(p) = $post_id
+                    MATCH (p)<-[:ABOUT]-(c:Comment)
+                    RETURN c"""
+            result = session.run(query, post_id=post_id)
+            comments = [record["c"] for record in result]
+            return comments

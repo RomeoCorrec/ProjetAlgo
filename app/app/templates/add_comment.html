@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Page</title>
+    <style>
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header, footer {
+    background-color: #007bff;
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+}
+
+.post {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.comments {
+    margin-top: 20px;
+}
+
+.comment {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment p {
+    margin: 0;
+}
+
+.comment-meta {
+    margin-top: 10px;
+}
+
+.comment-meta span {
+    color: #777;
+}
+
+.comment-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul li:first-child {
+    margin-left: 0;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Social Network</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'profil' %}">Profile</a></li>
+                    <li><span>{{ request.session.user.username }}</span></li>
+                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="post">
+                <p>Par : {{ post.author }}</p>
+                <p>{{ post.content }}</p>
+                {% if post.image %}
+                <img src="{{ post.image }}" alt="Post Image">
+                {% endif %}
+                <div class="post-meta">
+                    <span>{{ post.number_like }} Likes</span>
+                    <button>Like</button>
+                </div>
+            </div>
+            <div class="comments">
+                <h2>Comments</h2>
+                {% for comment in comments %}
+                <div class="comment">
+                    <p>{{ comment.username }}:</p>
+                    <p>{{ comment.content }}</p>
+                    <div class="comment-meta">
+                        <span>{{ comment.date}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="comment-form">
+                <h2>Add a Comment</h2>
+                <form  method="POST" action="{% url 'add_comment' post_id %}">
+                    {% csrf_token %}
+                    <textarea name="comment_content" rows="4" placeholder="Write your comment..." required></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2024 ISEP</p>
+        </footer>
+    </div>
+</body>
+</html>
