@@ -42,7 +42,7 @@ class graphDB:
         with self._driver.session() as session:
             result = session.run("""
                 MATCH (u:User {username: $user_name})-[:FRIEND]->(common:User)<-[:FRIEND]-(v:User)
-                WHERE NOT (u)-[:KNOWS]->(v)
+                WHERE NOT (u)-[:FRIEND]->(v)
                 RETURN v.username AS username
             """, user_name=user_name)
             common_friends = [row['username'] for row in result]

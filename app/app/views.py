@@ -131,9 +131,11 @@ def profil_page(request):
     posts = GDB.get_posts(username)
     friends = GDB.get_friends(username)
     post_id = []
+    post_likes = []
     for post in posts:
         post_id.append(post["id"])
-    posts = zip(posts, post_id)
+        post_likes.append(GDB.get_like_count(int(post["id"])))
+    posts = zip(posts, post_id, post_likes)
     return render(request, 'profil.html', {'posts': posts, 'friends': friends})
 
 def delete_post(request):

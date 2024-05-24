@@ -277,7 +277,7 @@
                 <h2>Your Posts</h2>
                 <div class="user-posts">
                     <div class="posts">
-                        {% for post, post_id in posts %}
+                        {% for post, post_id, post_likes in posts %}
                             <div class="post">
                                 <form method = "POST" action="{% url 'delete_post' %}">
                                     {% csrf_token %}
@@ -290,7 +290,7 @@
                                     <img src="{% static post.image %}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
-                                    <span>{{ post.number_like }} Likes</span>
+                                    <span>{{ post_likes }} Likes</span>
                                 </div>
                             </div>
                         {% endfor %}
