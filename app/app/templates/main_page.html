@@ -220,6 +220,12 @@
         margin-bottom: 15px;
     }
 
+ .post img {
+     max-width: 95%;
+     border-radius: 10px;
+     margin-top: 10px;
+ }
+
  .tab-button {
     width: 50%;
     padding: 10px 0;
@@ -272,7 +278,7 @@ input[type="radio"]:checked + label {
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'profil' %}">Profil</a></li>
+                    <li><a href="{% url 'profil_page' %}">Profil</a></li>
                     <li><span>{{ request.session.user.username }}</span></li>
                     <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
@@ -395,7 +401,7 @@ input[type="radio"]:checked + label {
                 <h2>Profile</h2>
                 <!-- Modification du profil -->
                 <div class="profile-edit">
-                    <a href="{% url 'modify_profil' %}" class="button">Edit Profile</a>
+                    <a href="{% url 'modify_profil_page' %}" class="button">Edit Profile</a>
                 </div>
             </aside>
         </main>

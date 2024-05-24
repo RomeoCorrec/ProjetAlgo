@@ -142,7 +142,7 @@
         }
 
         .posts .post img {
-            max-width: 50%;
+            max-width: 95%;
             border-radius: 10px;
             margin-top: 10px;
         }
@@ -267,7 +267,7 @@
                 <h2>Activities and Posts</h2>
                 <div class="create-post">
                     <h2>Create a Post</h2>
-                    <form method="POST" action="{% url 'profil' %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'post' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <textarea name="content" placeholder="What's on your mind?" required></textarea>
                         <input type="file" name="image">
@@ -286,8 +286,6 @@
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>
-                                    <button>Like</button>
-                                    <button>Comment</button>
                                 </div>
                             </div>
                         {% endfor %}
