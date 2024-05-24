@@ -143,7 +143,6 @@ def post(request):
             fs = FileSystemStorage('app/static/')
             filename = fs.save(image.name, image)
             uploaded_file_url = image.name
-            print(uploaded_file_url)
         else:
             uploaded_file_url = None
 
