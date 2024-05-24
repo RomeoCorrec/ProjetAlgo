@@ -81,16 +81,6 @@ def main_page(request):
         post_id.append(post["id"])
         post_likes.append(GDB.get_like_count(int(post["id"])))
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
-    print(post_likes)
-    # if request.method == 'POST':
-    #     search_query = request.POST.get('search_query', '')
-    #     like_post_id = request.POST.get("like_post_id")
-    #     print(like_post_id)
-    #     if search_query:
-    #         return redirect('search_profil', username=search_query)
-    #     if(like_post_id):
-    #         if not GDB.has_liked_post(int(like_post_id),username):
-    #             GDB.like_post(int(like_post_id), username)
     return render(request,
                   'main_page.html',
                   {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
@@ -135,11 +125,16 @@ def is_valid_password(password: str) -> bool:
 
     return True
 
-def profil(request):
+def profil_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     posts = GDB.get_posts(username)
     friends = GDB.get_friends(username)
+    return render(request, 'profil.html', {'posts': posts, 'friends': friends})
+
+def post(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
     if request.method == 'POST':
         content = request.POST.get('content')
         image = request.FILES.get('image') if 'image' in request.FILES else None
@@ -154,11 +149,9 @@ def profil(request):
 
         new_post = Post(content, uploaded_file_url)
         GDB.add_post(username, new_post)
-        return redirect('profil')
+    return redirect('profil_page')
 
-    return render(request, 'profil.html', {'posts': posts, 'friends': friends})
-
-def modify_profil(request):
+def modify_profil_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     user_info = GDB.get_user_by_username(username)
@@ -168,6 +161,13 @@ def modify_profil(request):
     location = user_info["location"]
     sex = user_info["sex"]
     mail = user_info["mail"]
+    return render(request, 'modify_profil.html', {"name": name, "surname": surname, "age": age ,
+                                                  "location": location, "sex": sex, "mail": mail})
+
+def modify_profil(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    user_info = GDB.get_user_by_username(username)
     if request.method == 'POST':
         user_info["name"] = request.POST['name']
         user_info["surname"] = request.POST['surname']
@@ -175,15 +175,11 @@ def modify_profil(request):
         user_info["location"] = request.POST['location']
         user_info["sex"] = request.POST['sex']
         user_info["mail"] = request.POST['mail']
-
         GDB.modify_profil(username, user_info["name"], user_info["surname"], user_info["age"], user_info["location"],
                           user_info["sex"], user_info["mail"])
         modified_user = GDB.get_user_by_username(username)
         request.session['user'] = modified_user
-        return redirect('profil')
-
-    return render(request, 'modify_profil.html', {"name": name, "surname": surname, "age": age ,
-                                                  "location": location, "sex": sex, "mail": mail})
+    return redirect('profil_page')
 
 def search_profil(request, username=None):
     if request.method == 'POST':

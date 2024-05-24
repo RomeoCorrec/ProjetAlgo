@@ -149,7 +149,7 @@
         <main>
             <div class="profile-container">
                 <h2>Edit Profile</h2>
-                <form method="post">
+                <form method="post" action="{% url 'modify_profil'%}">
                     {% csrf_token %}
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" value="{{name}}" required>
@@ -174,7 +174,7 @@
                     <input type="email" id="mail" name="mail" value="{{ mail }}" required>
 
                     <button type="submit">Save Changes</button>
-                    <a href="{% url 'profil'%}" class="back-button">&#8592; Back to Profile</a>
+                    <a href="{% url 'profil_page'%}" class="back-button">&#8592; Back to Profile</a>
                 </form>
             </div>
         </main>
