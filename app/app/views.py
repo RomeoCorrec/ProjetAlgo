@@ -8,6 +8,7 @@ import re
 from django.contrib import messages
 from .Class.Post import Post
 from django.core.files.storage import FileSystemStorage
+
 def create_account(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -81,18 +82,28 @@ def main_page(request):
         post_likes.append(GDB.get_like_count(int(post["id"])))
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
     print(post_likes)
-    if request.method == 'POST':
-        search_query = request.POST.get('search_query', '')
-        like_post_id = request.POST.get("like_post_id")
-        print(like_post_id)
-        if search_query:
-            return redirect('search_profil', username=search_query)
-        if(like_post_id):
-            if not GDB.has_liked_post(int(like_post_id),username):
-                GDB.like_post(int(like_post_id), username)
+    # if request.method == 'POST':
+    #     search_query = request.POST.get('search_query', '')
+    #     like_post_id = request.POST.get("like_post_id")
+    #     print(like_post_id)
+    #     if search_query:
+    #         return redirect('search_profil', username=search_query)
+    #     if(like_post_id):
+    #         if not GDB.has_liked_post(int(like_post_id),username):
+    #             GDB.like_post(int(like_post_id), username)
     return render(request,
                   'main_page.html',
                   {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
+
+def like_post(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    if request.method == 'POST':
+        like_post_id = request.POST.get("like_post_id")
+        if like_post_id:
+            if not GDB.has_liked_post(int(like_post_id), username):
+                GDB.like_post(int(like_post_id), username)
+    return redirect('main_page')
 
 def deconexion(request):
     request.session.flush()
