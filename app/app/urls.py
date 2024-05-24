@@ -41,6 +41,7 @@ urlpatterns = [
     path('send-private-message/', views.send_private_messages, name='send_private_messages'),
     path('visit-profil/<str:username>', views.visit_profil, name='visit_profil'),
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
-    path('like-post/', views.like_post, name='like_post')
+    path('like-post/', views.like_post, name='like_post'),
+     path('delete-post/', views.delete_post, name='delete_post')
 ]
 

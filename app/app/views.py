@@ -130,7 +130,22 @@ def profil_page(request):
     username = request.session['user']['username']
     posts = GDB.get_posts(username)
     friends = GDB.get_friends(username)
+    post_id = []
+    for post in posts:
+        post_id.append(post["id"])
+    posts = zip(posts, post_id)
     return render(request, 'profil.html', {'posts': posts, 'friends': friends})
+
+def delete_post(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if request.method == 'POST':
+        delete_post_id = request.POST.get("delete_post_id")
+        print("POST_ID: ",delete_post_id)
+        if delete_post_id:
+            GDB.delete_post(int(delete_post_id))
+
+    return redirect("profil_page")
+
 
 def post(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
