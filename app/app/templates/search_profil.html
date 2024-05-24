@@ -192,12 +192,15 @@
                 <div class="friends">
                     <h2>Friends</h2>
                     <ul>
-                        <!-- Exemple d'ami -->
+                        {% for friend in friends %}
                         <li>
-                            <img src="" alt="Friend">
-                            <span>Friend Name</span>
+                            <form method="POST" action="{% url 'search_profil' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ friend }}" required>
+                                <button type="submit" class="button">{{ friend }}</button>
+                            </form>
                         </li>
-                        <!-- Ajouter d'autres amis ici -->
+                        {% endfor %}
                     </ul>
                 </div>
             </section>

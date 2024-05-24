@@ -142,7 +142,7 @@
         }
 
         .posts .post img {
-            max-width: 100%;
+            max-width: 50%;
             border-radius: 10px;
             margin-top: 10px;
         }
@@ -221,6 +221,10 @@
             background-color: #007bff;
             color: #fff;
         }
+        .user-posts {
+        overflow-y: auto; /* Ajoute une barre de défilement vertical si nécessaire */
+        max-height: 500px; /* Définissez une hauteur maximale pour la section */
+         }
     </style>
 </head>
 <body>
@@ -270,14 +274,15 @@
                         <button type="submit">Post</button>
                     </form>
                 </div>
+                <h2>Your Posts</h2>
                 <div class="user-posts">
-                    <h2>Your Posts</h2>
                     <div class="posts">
                         {% for post in posts %}
                             <div class="post">
                                 <p>{{ post.content }}</p>
                                 {% if post.image %}
-                                    <img src="{{ post.image }}" alt="Post Image">
+                                    {% load static %}
+                                    <img src="{% static post.image %}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post.number_like }} Likes</span>

@@ -124,10 +124,12 @@ def profil(request):
     if request.method == 'POST':
         content = request.POST.get('content')
         image = request.FILES.get('image') if 'image' in request.FILES else None
+        print("IMAGE:", image)
         if image:
-            fs = FileSystemStorage()
+            fs = FileSystemStorage('app/templates/')
             filename = fs.save(image.name, image)
-            uploaded_file_url = fs.url(filename)
+            uploaded_file_url = image.name
+            print(uploaded_file_url)
         else:
             uploaded_file_url = None
 
@@ -172,6 +174,7 @@ def search_profil(request, username=None):
             username = search_query
             if GDB.check_username_exists(username):
                 user_info = GDB.get_user_by_username(username)
+                friends = GDB.get_friends(username)
                 name = user_info["name"]
                 surname = user_info["surname"]
                 age = user_info["age"]
@@ -183,7 +186,7 @@ def search_profil(request, username=None):
                 is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
                 show_button = not (is_friend or is_friend_request)
                 return render(request, 'search_profil.html', {"username":username,"name": name, "surname": surname, "age": age ,
-                                                  "location": location, "sex": sex, "mail": mail, "posts": posts, "show_button": show_button})
+                                                  "location": location, "sex": sex, "mail": mail, "posts": posts, "show_button": show_button, 'friends': friends})
             else:
                 messages.error(request, f"User '{search_query}' not found.")
                 return redirect('search_profil')
@@ -205,12 +208,13 @@ def visit_profil(request, username):
     return render(request, 'search_profil.html', {"username": username, "name": name, "surname": surname, "age": age,
                                                   "location": location, "sex": sex, "mail": mail, "posts": posts,
                                                   "show_button": show_button})
+
 def send_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     sender = request.session['user']['username']
     receiver = request.POST['to_user']
     GDB.add_new_friend_request(sender, receiver)
-    return redirect('search_profil')
+    return redirect('main_page')
 
 def accept_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
