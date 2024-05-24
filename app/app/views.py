@@ -66,6 +66,7 @@ def login_view(request):
 
 def main_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
     # Récupérer les amis de l'utilisateur
     friends = GDB.get_connected_users(request.session['user']["username"])
     friends_requests = GDB.get_friends_requests(request.session['user']["username"])
@@ -74,14 +75,21 @@ def main_page(request):
     sorted_friends_posts = sorted(friends_posts, key=lambda x: x['date'], reverse=True)
     sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
     post_id = []
+    post_likes = []
     for post in friends_posts:
         post_id.append(post["id"])
-    friends_posts_with_ids = zip(sorted_friends_posts, post_id)
-    print(post_id)
+        post_likes.append(GDB.get_like_count(int(post["id"])))
+    friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
+    print(post_likes)
     if request.method == 'POST':
         search_query = request.POST.get('search_query', '')
+        like_post_id = request.POST.get("like_post_id")
+        print(like_post_id)
         if search_query:
             return redirect('search_profil', username=search_query)
+        if(like_post_id):
+            if not GDB.has_liked_post(int(like_post_id),username):
+                GDB.like_post(int(like_post_id), username)
     return render(request,
                   'main_page.html',
                   {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
@@ -126,7 +134,7 @@ def profil(request):
         image = request.FILES.get('image') if 'image' in request.FILES else None
         print("IMAGE:", image)
         if image:
-            fs = FileSystemStorage('app/templates/')
+            fs = FileSystemStorage('app/static/')
             filename = fs.save(image.name, image)
             uploaded_file_url = image.name
             print(uploaded_file_url)

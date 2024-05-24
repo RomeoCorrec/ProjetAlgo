@@ -152,7 +152,7 @@ class graphDB:
         date = datetime.datetime.now()
         with self._driver.session() as session:
             query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date, author: $username})"
-            session.run(query_creation, content = post.content, image = post.images, date = date, username = username)
+            session.run(query_creation, content = post.content, image = post.images, date = date, username = username, likes = likes)
             query_link = "MATCH (a:User {username: $username}) , (b:Post {date: $date}) CREATE (a)-[:POSTED]->(b)"
             session.run(query_link, username=username, date=date)
 
@@ -283,3 +283,35 @@ class graphDB:
             result = session.run(query, post_id=post_id)
             comments = [record["c"] for record in result]
             return comments
+
+    def get_like_count(self,post_id):
+        query = """
+        MATCH (:User)-[l:LIKE]->(p:Post)
+        WHERE id(p) = $post_id
+        RETURN COUNT(l) AS likeCount
+        """
+        with self._driver.session() as session:
+            result = session.run(query, post_id = post_id)
+            like_count = result.single()["likeCount"]
+        return like_count
+
+    def has_liked_post(self, post_id, username):
+        query = """
+        MATCH (:User {username: $username})-[l:LIKE]->(p:Post)
+        WHERE id(p) = $post_id
+        RETURN COUNT(l) as like_count
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username = username, post_id = post_id)
+            like_count = result.single()["like_count"]
+        return like_count > 0
+
+    def like_post(self, post_id, username):
+        query = """
+        MATCH (u:User {username: $username}), (p:Post)
+        WHERE id(p) = $post_id
+        CREATE (u)-[:LIKE]->(p)
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username = username, post_id = post_id)
+

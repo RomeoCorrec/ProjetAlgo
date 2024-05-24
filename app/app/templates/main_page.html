@@ -296,7 +296,7 @@ input[type="radio"]:checked + label {
                     <label for="tab2" class="tab-button">Recommended posts</label>
                     <div class="tab-content" id="content1">
                         <div class="posts-container">
-                            {% for post, post_id in friends_posts %}
+                            {% for post, post_id, post_likes in friends_posts %}
                             <div class="post">
                                 <p>Par : {{ post.author}}</p>
                                 <p>Date : {{ post.date}}</p>
@@ -305,8 +305,12 @@ input[type="radio"]:checked + label {
                                 <img src="{{ post.image }}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
-                                    <span>{{ post.number_like }} Likes</span>
-                                    <button>Like</button>
+                                    <span>{{ post_likes }} Likes</span>
+                                    <form method = "POST" action="{% url 'main_page' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="like_post_id" value="{{ post_id }}">
+                                        <button type = submit>Like</button>
+                                    </form>
                                     <form method="GET" action="{% url 'add_comment' post_id %}">
                                          <button type="submit">Comment</button>
                                     </form>
