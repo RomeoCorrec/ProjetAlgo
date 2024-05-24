@@ -152,7 +152,7 @@ class graphDB:
         date = datetime.datetime.now()
         with self._driver.session() as session:
             query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date, author: $username})"
-            session.run(query_creation, content = post.content, image = post.images, date = date, username = username, likes = likes)
+            session.run(query_creation, content = post.content, image = post.images, date = date, username = username)
             query_link = "MATCH (a:User {username: $username}) , (b:Post {date: $date}) CREATE (a)-[:POSTED]->(b)"
             session.run(query_link, username=username, date=date)
 

@@ -306,7 +306,7 @@ input[type="radio"]:checked + label {
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{ post_likes }} Likes</span>
-                                    <form method = "POST" action="{% url 'main_page' %}">
+                                    <form method = "POST" action="{% url 'like_post' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="like_post_id" value="{{ post_id }}">
                                         <button type = submit>Like</button>
