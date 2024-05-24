@@ -148,10 +148,6 @@
         margin-top: 10px;
     }
 
-    .post-meta span {
-        font-size: 14px;
-    }
-
     .post-meta button {
         background-color: transparent;
         color: #007bff;
@@ -163,6 +159,12 @@
     .post-meta button:hover {
         color: #0056b3;
     }
+
+    .post-meta span {
+        font-size: 14px;
+        color: #777;
+    }
+
 
     .feed {
         flex: 3;
@@ -231,7 +233,12 @@ input[type="radio"]:checked + label {
     justify-content: space-between;
     align-items: center;
 }
-
+.post img {
+    max-width: 100%;
+    max-heigth: 50px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
  </style>
 </head>
 <body>
@@ -304,9 +311,9 @@ input[type="radio"]:checked + label {
                         <div class="posts-container">
                             {% for post, post_id, post_likes in friends_posts %}
                             <div class="post">
-                                <p>Par : {{ post.author}}</p>
+                                <p class="author">{{ post.author}}</p>
                                 <p>Date : {{ post.date}}</p>
-                                <p>{{ post.content }}</p>
+                                <p class = "content">{{ post.content }}</p>
                                 {% if post.image %}
                                     {% load static %}
                                     <img src="{% static post.image %}" alt="Post Image">
