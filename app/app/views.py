@@ -69,11 +69,10 @@ def main_page(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     # Récupérer les amis de l'utilisateur
-    friends = GDB.get_connected_users(username)
-    friends_requests = GDB.get_friends_requests(username)
-    recommandations = GDB.get_recommendations(username)
-    friends_posts = GDB.get_friends_posts(username)
-    recommended_posts = GDB.get_recommendations_posts(username)
+    friends = GDB.get_connected_users(request.session['user']["username"])
+    friends_requests = GDB.get_friends_requests(request.session['user']["username"])
+    friends_posts = GDB.get_friends_posts(request.session['user']["username"])
+    recommended_posts = GDB.get_recommendations_posts(request.session['user']["username"])
     sorted_friends_posts = sorted(friends_posts, key=lambda x: x['date'], reverse=True)
     sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
     post_id = []
@@ -84,9 +83,7 @@ def main_page(request):
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
     return render(request,
                   'main_page.html',
-                  {'friends': friends, 'friends_requests': friends_requests,
-                   'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts,
-                   'post_id': post_id, 'recommandations': recommandations})
+                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
 
 def like_post(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
