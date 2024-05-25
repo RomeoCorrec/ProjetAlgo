@@ -350,7 +350,7 @@ def group_list(request):
     user_friends = GDB.get_friends(username)
     user_groups = GDB.get_groups(username)
     invitation_groups = GDB.get_groups_invitation(username)
-    return render(request, 'group_list.html', {'user_friends' : user_friends, 'user_groups':user_groups, 'invitation_groups': invitation_groups})
+    return render(request, 'group_list.html', {'user_friends' : user_friends, 'user_groups':user_groups, 'invitation_groups': invitation_groups, 'username':username})
 
 def create_group(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
