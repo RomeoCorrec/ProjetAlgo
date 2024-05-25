@@ -444,7 +444,7 @@ input[type="radio"]:checked + label {
                                 {% for post, post_id, post_likes in recommended_posts %}
                                 <div class="post">
                                     <div class="credit">
-                                        <p>Par : {{ post.author}}</p>
+                                        <p>{{ post.author}}</p>
                                         <a href="{% url 'visit_profil' post.author %}" class="visit-button">Visit Profile</a>
                                     </div>
                                     <p>{{ post.content }}</p>
