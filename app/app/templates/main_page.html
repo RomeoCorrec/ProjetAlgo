@@ -270,6 +270,11 @@ input[type="radio"]:checked + label {
     border-radius: 10px;
     margin-top: 10px;
 }
+
+.recommandation {
+    margin-bottom: 10px;
+}
+
  </style>
 </head>
 <body>
@@ -286,20 +291,20 @@ input[type="radio"]:checked + label {
         </header>
         <main>
             <aside class="sidebar-left">
-                <h2>Friends</h2>
-                <!-- Liste des amis -->
-                <div class="friends">
-                    <ul>
-                        {% for friend in friends %}
-                        <li>
-                            <form method="POST" action="{% url 'search_profil'%}">
-                                {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ friend}}" required>
-                                <button type="submit">{{ friend}}</button>
-                             </form>
-                        </li>
-                        {% endfor %}
-                    </ul>
+<!--                <h2>Friends</h2>-->
+<!--                &lt;!&ndash; Liste des amis &ndash;&gt;-->
+<!--                <div class="friends">-->
+<!--                    <ul>-->
+<!--                        {% for friend in friends %}-->
+<!--                        <li>-->
+<!--                            <form method="POST" action="{% url 'search_profil'%}">-->
+<!--                                {% csrf_token %}-->
+<!--                                <input type="hidden" name="search_query" value="{{ friend}}" required>-->
+<!--                                <button type="submit">{{ friend}}</button>-->
+<!--                             </form>-->
+<!--                        </li>-->
+<!--                        {% endfor %}-->
+<!--                    </ul>-->
                 <div class="friends-management">
                     <h2>Friends requests</h2>
                     <!-- Liste des demandes d'amis -->
@@ -313,6 +318,15 @@ input[type="radio"]:checked + label {
                             </form>
                         </div>
                         {% endfor %}
+                </div>
+                <div class="recommandations">
+                    <h2>Recommandations</h2>
+                    <!-- Liste des recommandations -->
+                    {% for recommandation in recommandations %}
+                    <div class="recommandation">
+                        <a href="{% url 'visit_profil' recommandation %}" class="button">{{ recommandation }}</a>
+                    </div>
+                    {% endfor %}
                 </div>
                 <h2>Search Profiles</h2>
                 <!-- Recherche de profils -->
@@ -374,7 +388,8 @@ input[type="radio"]:checked + label {
                                     </div>
                                     <p>{{ post.content }}</p>
                                     {% if post.image %}
-                                        <img src="{{ post.image }}" alt="Post Image">
+                                        {% load static %}
+                                        <img src="{% static post.image %}" alt="Post Image">
                                     {% endif %}
                                     <div class="post-meta">
                                         <span>{{ post.number_like }} Likes</span>
@@ -397,11 +412,6 @@ input[type="radio"]:checked + label {
                     </form>
 
                     <button onclick="">Group Messages</button>
-                </div>
-                <h2>Profile</h2>
-                <!-- Modification du profil -->
-                <div class="profile-edit">
-                    <a href="{% url 'modify_profil_page' %}" class="button">Edit Profile</a>
                 </div>
             </aside>
         </main>

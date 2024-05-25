@@ -46,7 +46,36 @@ class graphDB:
                 RETURN v.username AS username
             """, user_name=user_name)
             common_friends = [row['username'] for row in result]
+            print(common_friends)
+            if common_friends[0] is None:
+                return []
+            common_friends = list(set(common_friends))
         return common_friends
+
+    def get_lv2recommendations(self, user_name):
+        with self._driver.session() as session:
+            result = session.run("""
+                MATCH (u:User {username: $user_name})-[:FRIEND]->(common:User)<-[:FRIEND]-(v:User)
+                WHERE NOT (u)-[:FRIEND]->(v) AND v.username <> $user_name
+                OPTIONAL MATCH (v)-[:FRIEND]->(fof:User)
+                WHERE NOT (u)-[:FRIEND]->(fof) AND fof.username <> $user_name
+                RETURN fof.username AS fofof
+            """, user_name=user_name)
+
+            fof = [row['fofof'] for row in result]
+            if fof[0] is None:
+                return []
+            recomendations = set(fof)
+        return list(recomendations)
+
+    def get_recommendations(self, user_name):
+        with self._driver.session() as session:
+            lv1 = self.find_common_friends(user_name)
+            print("lv1 : ", lv1)
+            lv2 = self.get_lv2recommendations(user_name)
+            print("lv2 : ", lv2)
+            recomendations = set(lv1 + lv2)
+            return list(recomendations)
 
     def get_all_users(self):
         with self._driver.session() as session:
