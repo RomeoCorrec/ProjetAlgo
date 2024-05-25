@@ -270,6 +270,45 @@ input[type="radio"]:checked + label {
     border-radius: 10px;
     margin-top: 10px;
 }
+
+.recommendation {
+    margin-bottom: 10px;
+}
+
+.search_post {
+  display: flex;
+  align-items: center;
+}
+
+.search_container {
+
+  display: flex;
+  justify-content: center;
+  margin-left: 200px;
+}
+
+.search_form {
+  display: flex;
+  margin-left: 10px;
+}
+
+.search_form input[type="text"] {
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.search_form button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
  </style>
 </head>
 <body>
@@ -286,20 +325,16 @@ input[type="radio"]:checked + label {
         </header>
         <main>
             <aside class="sidebar-left">
-                <h2>Friends</h2>
-                <!-- Liste des amis -->
-                <div class="friends">
-                    <ul>
-                        {% for friend in friends %}
-                        <li>
-                            <form method="POST" action="{% url 'search_profil'%}">
-                                {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ friend}}" required>
-                                <button type="submit">{{ friend}}</button>
-                             </form>
-                        </li>
+                <div class="recommendations">
+                    <h2>Recommendations</h2>
+                    <!-- Liste des recommandations -->
+                    <div class="recommendations-list">
+                        {% for recommendation in recommendations %}
+                        <div class="recommendation">
+                            <a href="{% url 'visit_profil' recommendation %}" class="button">{{ recommendation }}</a>
+                        </div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 <div class="friends-management">
                     <h2>Friends requests</h2>
                     <!-- Liste des demandes d'amis -->
@@ -331,7 +366,16 @@ input[type="radio"]:checked + label {
                 </div>
             </aside>
             <section class="feed">
-                <h2>Posts</h2>
+                <div class="search_post">
+                  <h2>Posts</h2>
+                  <div class="search_container">
+                    <form method="POST" action="{% url 'filter_posts'%}" class="search_form">
+                      {% csrf_token %}
+                      <input type="text" name="keyword" placeholder="Search for posts...">
+                      <button type="submit">Search</button>
+                    </form>
+                  </div>
+                </div>
                 <div class="posts-tabs">
                     <input type="radio" id="tab1" name="tabs" checked>
                     <label for="tab1" class="tab-button">Friends' posts</label>
@@ -374,7 +418,8 @@ input[type="radio"]:checked + label {
                                     </div>
                                     <p>{{ post.content }}</p>
                                     {% if post.image %}
-                                        <img src="{{ post.image }}" alt="Post Image">
+                                        {% load static %}
+                                        <img src="{% static post.image %}" alt="Post Image">
                                     {% endif %}
                                     <div class="post-meta">
                                         <span>{{ post.number_like }} Likes</span>

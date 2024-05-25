@@ -168,6 +168,21 @@
         overflow-y: auto; /* Ajoute une barre de défilement vertical si nécessaire */
         max-height: 500px; /* Définissez une hauteur maximale pour la section */
          }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -185,13 +200,17 @@
         <main>
             <section class="user-info-block">
                 <h2>{{ username }}'s Profile</h2>
-                <div class="profile-details">
-                    <p><strong>Name:</strong> <span>{{ name }} {{surname }}</span></p>
-                    <p><strong>Age:</strong> <span>{{ age }}</span></p>
-                    <p><strong>Location:</strong> <span>{{ location }}</span></p>
-                    <p><strong>Sex:</strong> <span>{{ sex }}</span></p>
-                    <p><strong>Email:</strong> <span>{{ mail }}</span></p>
-                </div>
+                {% if private and not is_friend %}
+                    <p>This profile is private</p>
+                {% else %}
+                    <div class="profile-details">
+                        <p><strong>Name:</strong> <span>{{ name }} {{surname }}</span></p>
+                        <p><strong>Age:</strong> <span>{{ age }}</span></p>
+                        <p><strong>Location:</strong> <span>{{ location }}</span></p>
+                        <p><strong>Sex:</strong> <span>{{ sex }}</span></p>
+                        <p><strong>Email:</strong> <span>{{ mail }}</span></p>
+                    </div>
+                {% endif %}
                 {% if show_button %}
                     <form method="POST" action="{% url 'send_friend_request' %}">
                         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

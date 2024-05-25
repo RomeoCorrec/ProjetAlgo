@@ -10,6 +10,7 @@ class User:
         self.location = location
         self.sex = sex
         self.mail = mail
+        self.private = False
 
         self.friends = [User]
         self.friends_requests_send = [User]

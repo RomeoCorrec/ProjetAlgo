@@ -173,6 +173,12 @@
                     <label for="mail">Email</label>
                     <input type="email" id="mail" name="mail" value="{{ mail }}" required>
 
+                    <label for="private">Private account</label>
+                    <select id="private" name="private" required>
+                        <option value="True" {% if user_info.private == True %}selected{% endif %}>True</option>
+                        <option value="False" {% if user_info.sex == False %}selected{% endif %}>False</option>
+                    </select>
+
                     <button type="submit">Save Changes</button>
                     <a href="{% url 'profil_page'%}" class="back-button">&#8592; Back to Profile</a>
                 </form>
