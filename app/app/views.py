@@ -264,12 +264,17 @@ def visit_profil(request, username):
     sex = user_info["sex"]
     mail = user_info["mail"]
     posts = GDB.get_posts(username)
+    friends = GDB.get_friends(username)
+    post_likes = []
+    for post in posts:
+        post_likes.append(int(GDB.get_like_count(post["id"])))
+    posts = zip(posts, post_likes)
     is_friend = GDB.is_friend(request.session['user']['username'], username)
     is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
     show_button = not (is_friend or is_friend_request)
     return render(request, 'search_profil.html', {"username": username, "name": name, "surname": surname, "age": age,
                                                   "location": location, "sex": sex, "mail": mail, "posts": posts,
-                                                  "show_button": show_button})
+                                                  "show_button": show_button, "friends":friends})
 
 def send_friend_request(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
