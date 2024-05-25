@@ -51,5 +51,6 @@ urlpatterns = [
     path('group-message/<str:group_name>', views.group_messages_page, name='group_messages_page'),
     path('accept-group-invitation/<str:group_name>', views.accept_group_invitation_model, name='accept_group_invitation'),
     path('reject-group-invitation/<str:group_name>', views.reject_group_invitation_model, name='reject_group_invitation'),
+    path('notifications/', views.notifications_page, name='notifications_page'),
 ]
 

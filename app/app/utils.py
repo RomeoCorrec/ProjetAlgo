@@ -459,3 +459,57 @@ class graphDB:
             result = session.run(query, name = group_name)
             messages = [{"sender": row["sender"], "content": row["content"], "timestamp": row["timestamp"]} for row in result]
             return messages
+
+    def create_notification(self, recipient_username, notification_type, content):
+        query = """
+        MATCH (u:User {username: $recipient_username})
+        CREATE (n:Notification {type: $notification_type, content: $content, timestamp: $timestamp})
+        MERGE (u)-[:HAS_NOTIFICATION]->(n)
+        """
+        timestamp = datetime.datetime.now()
+        with self._driver.session() as session:
+            session.run(query, recipient_username=recipient_username, notification_type=notification_type, content=content, timestamp=timestamp)
+
+    def get_notifications(self, username):
+        query = """
+        MATCH (n:Notification)
+        MATCH (u:User {username: $username})
+        WHERE (u)-[:HAS_NOTIFICATION]->(n) OR (u)-[:SEE]->(n)
+        RETURN n ORDER BY n.timestamp DESC
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username=username)
+            notifications = []
+            for record in result:
+                notifications.append(record['n'])
+            return notifications
+
+    def get_unseen_notifications(self, username):
+        query = """
+        MATCH (u:User {username: $username})-[:HAS_NOTIFICATION]->(n:Notification)
+        RETURN n
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username=username)
+            notifications = [record["n"] for record in result]
+        return notifications
+
+    def mark_notification_as_seen(self, username, notification_id):
+        query = """
+        MATCH (u:User {username: $username})-[rel:HAS_NOTIFICATION]->(n:Notification)
+        WHERE id(n) = $notification_id
+        DELETE rel
+        CREATE (u)-[:SEE]->(n)
+        """
+        with self._driver.session() as session:
+            session.run(query, username=username, notification_id=notification_id)
+
+    def has_unseen_notification(self, username):
+        query = """
+        MATCH (u:User {username: $username})-[:HAS_NOTIFICATION]->(n:Notification)
+        RETURN COUNT(n) > 0 AS has_unseen
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username=username)
+            has_unseen = result.single()["has_unseen"]
+        return has_unseen
