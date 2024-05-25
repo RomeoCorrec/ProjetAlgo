@@ -85,6 +85,12 @@ def main_page(request, filter=""):
         post_id.append(post["id"])
         post_likes.append(GDB.get_like_count(int(post["id"])))
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
+    post_id_reco = []
+    post_likes_reco = []
+    for post in sorted_recommended_posts:
+        post_id_reco.append(post["id"])
+        post_likes_reco.append(GDB.get_like_count(int(post["id"])))
+    sorted_recommended_posts = zip(sorted_recommended_posts, post_id_reco, post_likes_reco)
     return render(request,
                   'main_page.html',
                   {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids,
@@ -198,7 +204,7 @@ def modify_profil(request):
         user_info["mail"] = request.POST['mail']
         user_info["private"] = request.POST['private']
         GDB.modify_profil(username, user_info["name"], user_info["surname"], user_info["age"], user_info["location"],
-                          user_info["sex"], user_info["mail"])
+                          user_info["sex"], user_info["mail"], user_info["private"])
         modified_user = GDB.get_user_by_username(username)
         request.session['user'] = modified_user
     return redirect('profil_page')
