@@ -307,5 +307,48 @@ def add_comment(request, post_id):
     return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id, 'likes' : likes})
 
 def group_list(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    user_friends = GDB.get_friends(username)
+    user_groups = GDB.get_groups(username)
+    invitation_groups = GDB.get_groups_invitation(username)
+    return render(request, 'group_list.html', {'user_friends' : user_friends, 'user_groups':user_groups, 'invitation_groups': invitation_groups})
 
-    return render(request, 'group_list.html')
+def create_group(request):
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    username = request.session['user']['username']
+    if request.method == 'POST':
+        group_name = request.POST.get('group_name')
+        invitation_list = request.POST.getlist('invite_users')
+        GDB.create_group(group_name, username, invitation_list)
+    return redirect('group_list')
+
+def send_group_messages(request):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if request.method == 'POST':
+        group_name = request.POST.get('group_name')
+        content_message = request.POST.get('send_message')
+        if content_message:
+            print("GROUP NAME", group_name)
+            GDB.create_group_message(username,group_name, content_message)
+    return redirect('group_messages_page', group_name=group_name)
+
+def group_messages_page(request, group_name):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    group_messages = GDB.get_group_messages(group_name)
+    return render(request, 'group_message.html', {'group_messages':group_messages, 'group_name': group_name})
+
+def accept_group_invitation_model(request, group_name):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB.accept_invitation_group(username, group_name)
+    return redirect('group_list')
+
+def reject_group_invitation_model(request, group_name):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB.refuse_invitation_group(username, group_name)
+    print("GOUOP NALME",  group_name)
+    return redirect('group_list')

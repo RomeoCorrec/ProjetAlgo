@@ -44,5 +44,10 @@ urlpatterns = [
     path('like-post/', views.like_post, name='like_post'),
     path('delete-post/', views.delete_post, name='delete_post'),
     path('group-list/', views.group_list, name='group_list'),
+    path('create-group/', views.create_group, name='create_group'),
+    path('send-group-message/', views.send_group_messages, name='send_group_messages'),
+    path('group-message/<str:group_name>', views.group_messages_page, name='group_messages_page'),
+    path('accept-group-invitation/<str:group_name>', views.accept_group_invitation_model, name='accept_group_invitation'),
+    path('reject-group-invitation/<str:group_name>', views.reject_group_invitation_model, name='reject_group_invitation'),
 ]
 

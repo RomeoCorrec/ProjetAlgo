@@ -93,11 +93,12 @@
             display: flex;
             justify-content: space-between;
         }
-        .invitation-actions button {
+        .invitation-actions a {
             padding: 5px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
         }
         .accept {
             background-color: #28a745;
@@ -129,10 +130,9 @@
                 <h2>Your Groups</h2>
                 <div class="group-list">
                     <ul>
-                        <li><a href="#">Group 1</a></li>
-                        <li><a href="#">Group 2</a></li>
-                        <li><a href="#">Group 3</a></li>
-                        <!-- Add more groups as needed -->
+                        {% for group in user_groups %}
+                        <li><a href="{% url 'group_messages_page' group.name %}">{{group.name}}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -141,20 +141,15 @@
                 <div class="group-invitations">
                     <ul>
                         <li>
-                            <span>Group 1 invited you to join</span>
+                            {% for group in invitation_groups %}
+                            <span>{{group.name}} invited you to join</span>
                             <div class="invitation-actions">
-                                <button class="accept">Accept</button>
-                                <button class="reject">Reject</button>
+                                <a href = "{% url 'accept_group_invitation' group.name %}" class="accept">Accept</a>
+                                <a href = "{% url 'reject_group_invitation' group.name %}" class="reject">Reject</a>
                             </div>
+                            {% endfor %}
                         </li>
-                        <li>
-                            <span>Group 2 invited you to join</span>
-                            <div class="invitation-actions">
-                                <button class="accept">Accept</button>
-                                <button class="reject">Reject</button>
-                            </div>
-                        </li>
-                        <!-- Add more invitations as needed -->
+
                     </ul>
                 </div>
             </div>
@@ -163,14 +158,14 @@
             <div class="group-section">
                 <h2>Create a New Group</h2>
                 <div class="create-group">
-                    <form action="#" method="post">
+                    <form action="{%  url 'create_group'%}" method="post">
                         {% csrf_token %}
                         <input type="text" name="group_name" placeholder="Group Name" required>
                         <select name="invite_users" multiple>
-                            <option value="user1">User 1</option>
-                            <option value="user2">User 2</option>
-                            <option value="user3">User 3</option>
-                            <!-- Add more users as needed -->
+                            {% for friend in user_friends %}
+                            <option value="{{friend}}">{{friend}}</option>
+                            {% endfor %}
+
                         </select>
                         <input type="submit" value="Create Group">
                     </form>

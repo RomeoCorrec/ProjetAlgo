@@ -315,3 +315,88 @@ class graphDB:
         with self._driver.session() as session:
             result = session.run(query, username = username, post_id = post_id)
 
+
+    def create_group(self, group_name, creator, invitation_list):
+        query_creation = """
+            MATCH (u:User {username: $creator})
+            CREATE (g:GroupDiscussion {name: $group_name, creator: $creator})"""
+        with self._driver.session() as session:
+            session.run(query_creation, creator = creator, group_name = group_name )
+
+            for username in invitation_list:
+                invite_query = """
+                MATCH (u:User {username: $username}), (g:GroupDiscussion {name: $group_name})
+                CREATE (u)-[:INVITATION]->(g)
+                """
+                session.run(invite_query, username=username, group_name=group_name)
+            query = """MATCH (u:User {username: $username}), (g:GroupDiscussion {name: $group_name})
+                       CREATE (u)-[:PARTICIPATE]->(g)"""
+            session.run(query, username = creator, group_name = group_name)
+
+    def accept_invitation_group(self, username, group_name):
+        query = """
+        MATCH (u:User {username: $username})-[inv:INVITATION]->(g:GroupDiscussion {name: $group_name})
+        MERGE (u)-[:PARTICIPATE]->(g)
+        DELETE inv
+        """
+        with self._driver.session() as session:
+            session.run(query, username=username, group_name=group_name)
+
+    def refuse_invitation_group(self, username, group_name):
+        query = """
+        MATCH (u:User {username: $username})-[inv:INVITATION]->(g:GroupDiscussion {name: $group_name})
+        DELETE inv
+        """
+        with self._driver.session() as session:
+            session.run(query, username=username, group_name=group_name)
+
+    def add_user_in_group(self, username, group_name):
+        with self._driver.session() as session:
+            invite_query = """
+            MATCH (u:User {username: $username}), (g:GroupDiscussion {name: $group_name})
+            CREATE (u)-[:INVITATION]->(g)
+            """
+            session.run(invite_query, username=username, group_name=group_name)
+
+    def get_groups(self, username):
+        query = """
+        MATCH (u:User {username: $username})-[:PARTICIPATE]->(g:GroupDiscussion)
+        RETURN g
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username=username)
+            groups = [record['g'] for record in result]
+        return groups
+
+    def get_groups_invitation(self, username):
+        query = """
+        MATCH (u:User {username: $username})-[:INVITATION]->(g:GroupDiscussion)
+        RETURN g
+        """
+        with self._driver.session() as session:
+            result = session.run(query, username=username)
+            groups = [record["g"] for record in result]
+        return groups
+
+    def create_group_message(self, sender, group_name, content):
+        with self._driver.session() as session:
+            # Création du message
+            query_create_message = (
+                "MATCH (d:GroupDiscussion) WHERE (d.name = $name )"
+                "CREATE (m:Message {sender: $sender, content: $content, timestamp: datetime()}) "
+                "MERGE (d)-[:CONTAIN]->(m)"
+            )
+            session.run(query_create_message, sender=sender, name=group_name, content=content)
+
+    def get_group_messages(self, group_name):
+        with self._driver.session() as session:
+            query = """
+            MATCH (d:GroupDiscussion)
+            WHERE (d.name =$name)
+            MATCH (d)-[:CONTAIN]-(m:Message)
+            RETURN m.content AS content, m.timestamp AS timestamp, m.sender AS sender
+            ORDER BY m.timestamp
+            """
+            result = session.run(query, name = group_name)
+            messages = [{"sender": row["sender"], "content": row["content"], "timestamp": row["timestamp"]} for row in result]
+            return messages
