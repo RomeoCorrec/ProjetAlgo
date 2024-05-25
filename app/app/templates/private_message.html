@@ -16,14 +16,14 @@
             min-height: 100vh;
         }
 
-        header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+   header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
         header h1 {
             margin: 0;
@@ -43,14 +43,32 @@
         header nav ul li a {
             color: #fff;
             text-decoration: none;
-            background-color: #007bff;
-            padding: 10px 15px;
-            border-radius: 5px;
+            background-color: #007bff; /* Ajout de la couleur de fond */
+            padding: 10px 15px; /* Espacement autour du lien */
+            border-radius: 5px; /* Coins arrondis */
         }
 
         header nav ul li a:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Couleur de fond au survol */
         }
+
+    ul {
+       list-style: none;
+       padding: 0;
+       margin: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    li a {
+         text-decoration: none;
+         color: #333;
+         font-weight: bold;
+    }
 
         .container {
             flex: 1;
@@ -181,7 +199,7 @@
             <ul>
                 <li><a href="{% url 'main_page' %}">Home</a></li>
                 <li><a href="{% url 'private_message_list' %}">Messages</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{% url 'deconnexion' %}">Logout</a></li>
             </ul>
         </nav>
     </header>
