@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Main Page</title>
  <style>
          /* main_page.css */
@@ -166,12 +168,18 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    p.author {
+    a.author {
         display: flex;
         align-items: center;
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 10px;
+        text-decoration: none;
+        color: black;
+    }
+    a.author:hover{
+        color: blue;
+
     }
 
     .post-author img {
@@ -332,6 +340,19 @@ input[type="radio"]:checked + label {
   cursor: pointer;
   margin-left: 10px;
 }
+.notification-badge {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+}
+header nav ul li {
+    margin-left: 20px;
+    position: relative; /* To position the notification badge */
+}
 
  </style>
 </head>
@@ -341,6 +362,14 @@ input[type="radio"]:checked + label {
             <h1>My Social Network</h1>
             <nav>
                 <ul>
+                     <li>
+                    <a href="{% url 'notifications_page' %}">
+                        <i class="fas fa-bell"></i>
+                        {% if has_new_notification %}
+                        <span class="notification-badge"></span>
+                        {% endif %}
+                    </a>
+                     </li>
                     <li><a href="{% url 'profil_page' %}">{{ request.session.user.username }}</a></li>
                     <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
@@ -409,7 +438,7 @@ input[type="radio"]:checked + label {
                         <div class="posts-container">
                             {% for post, post_id, post_likes in friends_posts %}
                             <div class="post">
-                                <p class="author">{{ post.author}}</p>
+                                <a href = "{% url 'visit_profil' post.author %}" class="author">{{ post.author}}</a>
                                 <p>Date : {{ post.date}}</p>
                                 <p class = "content">{{ post.content }}</p>
                                 {% if post.image %}

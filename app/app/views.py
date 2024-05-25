@@ -91,10 +91,11 @@ def main_page(request, filter=""):
         post_id_reco.append(post["id"])
         post_likes_reco.append(GDB.get_like_count(int(post["id"])))
     sorted_recommended_posts = zip(sorted_recommended_posts, post_id_reco, post_likes_reco)
+    has_new_notification = GDB.has_unseen_notification(username)
     return render(request,
                   'main_page.html',
                   {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids,
-                   'recommended_posts': sorted_recommended_posts, 'post_id': post_id, 'recommendations': recommendations,})
+                   'recommended_posts': sorted_recommended_posts, 'post_id': post_id, 'recommendations': recommendations,'has_new_notification':has_new_notification})
 
 def like_post(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
@@ -104,6 +105,9 @@ def like_post(request):
         if like_post_id:
             if not GDB.has_liked_post(int(like_post_id), username):
                 GDB.like_post(int(like_post_id), username)
+                post_author = GDB.get_post_by_id(int(like_post_id))["author"]
+                content = f"{username} liked your post."
+                GDB.create_notification(post_author, "like", content)
     return redirect('main_page')
 
 def deconexion(request):
@@ -340,6 +344,9 @@ def add_comment(request, post_id):
         content = request.POST.get('comment_content')
         if content:
             GDB.create_comment(post_id, content, username)
+            post_author = GDB.get_post_by_id(post_id)["author"]
+            content = f"{username} commented your post."
+            GDB.create_notification(post_author, "comment", content)
             return redirect('add_comment', post_id=post_id)
 
     return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id, 'likes' : likes})
@@ -390,3 +397,23 @@ def reject_group_invitation_model(request, group_name):
     GDB.refuse_invitation_group(username, group_name)
     print("GOUOP NALME",  group_name)
     return redirect('group_list')
+
+
+def notifications_page(request):
+    username = request.session['user']['username']
+    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if not username:
+        return redirect('login')
+
+    notifications = GDB.get_notifications(username)
+    unseen_notifications = GDB.get_unseen_notifications(username)
+    unseen_notifications_id = []
+    notifications_id = []
+    print(unseen_notifications)
+    for notif in unseen_notifications:
+        unseen_notifications_id.append(int(notif.element_id.split(':')[-1]))
+        GDB.mark_notification_as_seen(username, int(notif.element_id.split(':')[-1]))
+    for notif in notifications:
+        notifications_id.append(int(notif.element_id.split(':')[-1]))
+    notifications = zip(notifications, notifications_id)
+    return render(request, 'notifications.html', {'notifications' : notifications, 'unseen_notifications_id': unseen_notifications_id})
