@@ -11,7 +11,7 @@ class graphDB:
 
     def add_new_user(self, user: User):
         with self._driver.session() as session:
-            query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location, sex: $sex, mail: $mail})"
+            query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location, sex: $sex, mail: $mail, private: false})"
             session.run(query, username=user.username, name=user.name, surname=user.surname, age=user.age,
                         password=user.password, location=user.location, sex=user.sex, mail=user.mail)
 
@@ -46,8 +46,35 @@ class graphDB:
                 RETURN v.username AS username
             """, user_name=user_name)
             common_friends = [row['username'] for row in result]
+            if len(common_friends) != 0:
+                if common_friends[0] is None:
+                    return []
+            common_friends = list(set(common_friends))
         return common_friends
 
+    def get_lv2recommendations(self, user_name):
+        with self._driver.session() as session:
+            result = session.run("""
+                MATCH (u:User {username: $user_name})-[:FRIEND]->(common:User)<-[:FRIEND]-(v:User)
+                WHERE NOT (u)-[:FRIEND]->(v) AND v.username <> $user_name
+                OPTIONAL MATCH (v)-[:FRIEND]->(fof:User)
+                WHERE NOT (u)-[:FRIEND]->(fof) AND fof.username <> $user_name
+                RETURN fof.username AS fofof
+            """, user_name=user_name)
+
+            fof = [row['fofof'] for row in result]
+            if len(fof) != 0:
+                if fof[0] is None:
+                    return []
+            recomendations = set(fof)
+        return list(recomendations)
+
+    def get_recommendations(self, user_name):
+        with self._driver.session() as session:
+            lv1 = self.find_common_friends(user_name)
+            lv2 = self.get_lv2recommendations(user_name)
+            recomendations = set(lv1 + lv2)
+            return list(recomendations)
     def get_all_users(self):
         with self._driver.session() as session:
             result = session.run("MATCH (u:User) RETURN u.name AS name")
@@ -115,6 +142,11 @@ class graphDB:
             result = session.run("""MATCH (a:User {username: $sender})-[:FRIEND]->(b:User {username: $receiver}) RETURN b""", sender=sender, receiver=receiver)
             return result.single() is not None
 
+    def is_private(self, username):
+        with self._driver.session() as session:
+            result = session.run("""MATCH (u:User {username: $username}) RETURN u.private AS private""", username=username)
+            return result.single()["private"]
+
     def accept_friend_request(self, sender, receiver):
         with self._driver.session() as session:
             query = "MATCH (a:User {username: $sender})-[r:FRIEND_REQUEST]->(b:User {username: $receiver}) DELETE r"
@@ -142,10 +174,10 @@ class graphDB:
             query = "MATCH (a:User {username: $sender})-[r:FRIEND]->(b:User {username: $receiver}) DELETE r"
             session.run(query, sender=receiver, receiver=sender)
 
-    def modify_profil(self, username, name, surname, age, location, sex, mail):
+    def modify_profil(self, username, name, surname, age, location, sex, mail, private):
         with self._driver.session() as session:
-            query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail"
-            session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail)
+            query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail, u.private = $private"
+            session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail, private=private)
         return
 
     def add_post(self, username, post):
@@ -174,7 +206,27 @@ class graphDB:
                     'id': record['id']
                 }
                 posts.append(post)
-            print(posts)
+            return posts
+
+    def get_filtered_posts(self, username, keyword):
+        with self._driver.session() as session:
+            query = """
+            MATCH (a:User {username: $username})-[:POSTED]->(p:Post)
+            WHERE p.content CONTAINS $keyword
+            RETURN p.content AS content, p.image AS image, p.date AS date, p.author AS author, id(p) AS id
+            ORDER BY p.date DESC
+            """
+            result = session.run(query, username=username, keyword=keyword)
+            posts = []
+            for record in result:
+                post = {
+                    'content': record['content'],
+                    'image': record['image'],
+                    'date': record['date'],
+                    'author': record['author'],
+                    'id': record['id']
+                }
+                posts.append(post)
             return posts
 
     def get_friends_posts(self, username):
@@ -182,6 +234,13 @@ class graphDB:
         posts = []
         for friend in friends:
             posts += self.get_posts(friend)
+        return posts
+
+    def get_filtered_friends_posts(self, username, keyword):
+        friends = self.get_friends(username)
+        posts = []
+        for friend in friends:
+            posts += self.get_filtered_posts(friend, keyword)
         return posts
 
     def get_recommendations_posts(self, username):

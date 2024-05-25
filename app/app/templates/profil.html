@@ -247,6 +247,9 @@
                     <p><strong>Location:</strong> <span>{{ request.session.user.location }}</span></p>
                     <p><strong>Sex:</strong> <span>{{ request.session.user.sex }}</span></p>
                     <p><strong>Email:</strong> <span>{{ request.session.user.mail }}</span></p>
+                    <div class="profile-edit">
+                        <a href="{% url 'modify_profil_page' %}" class="button">Edit Profile</a>
+                    </div>
                 </div>
                 <div class="friends">
                     <h2>Friends</h2>

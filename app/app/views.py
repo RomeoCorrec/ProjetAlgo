@@ -65,14 +65,18 @@ def login_view(request):
         form = UserLoginForm()
     return render(request, 'login.html', {'form': form})
 
-def main_page(request):
+def main_page(request, filter=""):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     # Récupérer les amis de l'utilisateur
-    friends = GDB.get_connected_users(request.session['user']["username"])
-    friends_requests = GDB.get_friends_requests(request.session['user']["username"])
-    friends_posts = GDB.get_friends_posts(request.session['user']["username"])
-    recommended_posts = GDB.get_recommendations_posts(request.session['user']["username"])
+    friends = GDB.get_connected_users(username)
+    recommendations = GDB.get_recommendations(username)
+    friends_requests = GDB.get_friends_requests(username)
+    if filter != "":
+        friends_posts = GDB.get_filtered_friends_posts(username, filter)
+    else:
+        friends_posts = GDB.get_friends_posts(username)
+    recommended_posts = GDB.get_recommendations_posts(username)
     sorted_friends_posts = sorted(friends_posts, key=lambda x: x['date'], reverse=True)
     sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
     post_id = []
@@ -83,7 +87,8 @@ def main_page(request):
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
     return render(request,
                   'main_page.html',
-                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids, 'recommended_posts': sorted_recommended_posts, 'post_id': post_id})
+                  {'friends': friends, 'friends_requests': friends_requests, 'friends_posts': friends_posts_with_ids,
+                   'recommended_posts': sorted_recommended_posts, 'post_id': post_id, 'recommendations': recommendations,})
 
 def like_post(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
@@ -191,6 +196,7 @@ def modify_profil(request):
         user_info["location"] = request.POST['location']
         user_info["sex"] = request.POST['sex']
         user_info["mail"] = request.POST['mail']
+        user_info["private"] = request.POST['private']
         GDB.modify_profil(username, user_info["name"], user_info["surname"], user_info["age"], user_info["location"],
                           user_info["sex"], user_info["mail"])
         modified_user = GDB.get_user_by_username(username)
@@ -204,6 +210,14 @@ def search_profil(request, username=None):
         if search_query:
             username = search_query
             if GDB.check_username_exists(username):
+                if username == request.session['user']['username']:
+                    return redirect('profil_page')
+                is_friend = GDB.is_friend(request.session['user']['username'], username)
+                is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
+                if GDB.is_private(username) and not is_friend:
+                    show_button = not (is_friend or is_friend_request)
+                    return render(request, 'search_profil.html', {'username': username, 'private': True, 'show_button': show_button, 'is_friend': is_friend})
+                show_button = not (is_friend or is_friend_request)
                 user_info = GDB.get_user_by_username(username)
                 friends = GDB.get_friends(username)
                 name = user_info["name"]
@@ -224,11 +238,24 @@ def search_profil(request, username=None):
                                                   "location": location, "sex": sex, "mail": mail, "posts": posts, "show_button": show_button, 'friends': friends})
             else:
                 messages.error(request, f"User '{search_query}' not found.")
-                return redirect('search_profil')
+                return redirect('main_page')
     return render(request, 'main_page.html')
+
+def filter_posts(request):
+    if request.method == 'POST':
+        keyword = request.POST.get('keyword', '')
+        print("KEYWORD: ", keyword)
+        if keyword:
+            return redirect('main_page_filter', filter=keyword)
+        else:
+            return redirect('main_page')
 
 def visit_profil(request, username):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    if username == request.session['user']['username']:
+        return redirect('profil_page')
+    if GDB.is_private(username):
+        return render('search_profil.html', {'username': username, 'private': True})
     user_info = GDB.get_user_by_username(username)
     name = user_info["name"]
     surname = user_info["surname"]
