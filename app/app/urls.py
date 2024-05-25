@@ -42,6 +42,7 @@ urlpatterns = [
     path('visit-profil/<str:username>', views.visit_profil, name='visit_profil'),
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
     path('like-post/', views.like_post, name='like_post'),
-     path('delete-post/', views.delete_post, name='delete_post')
+    path('delete-post/', views.delete_post, name='delete_post'),
+    path('group-list/', views.group_list, name='group_list'),
 ]
 

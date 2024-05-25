@@ -148,7 +148,7 @@ nav ul li:first-child {
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'profil' %}">Profile</a></li>
+                    <li><a href="{% url 'profil_page' %}">Profile</a></li>
                     <li><span>{{ request.session.user.username }}</span></li>
                     <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
@@ -162,7 +162,7 @@ nav ul li:first-child {
                 <img src="{{ post.image }}" alt="Post Image">
                 {% endif %}
                 <div class="post-meta">
-                    <span>{{ post.number_like }} Likes</span>
+                    <span>{{ likes }} Likes</span>
                     <button>Like</button>
                 </div>
             </div>

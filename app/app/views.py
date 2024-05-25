@@ -77,7 +77,7 @@ def main_page(request):
     sorted_recommended_posts = sorted(recommended_posts, key=lambda x: x['date'], reverse=True)
     post_id = []
     post_likes = []
-    for post in friends_posts:
+    for post in sorted_friends_posts:
         post_id.append(post["id"])
         post_likes.append(GDB.get_like_count(int(post["id"])))
     friends_posts_with_ids = zip(sorted_friends_posts, post_id, post_likes)
@@ -213,6 +213,10 @@ def search_profil(request, username=None):
                 sex = user_info["sex"]
                 mail = user_info["mail"]
                 posts = GDB.get_posts(username)
+                post_likes = []
+                for post in posts:
+                    post_likes.append(GDB.get_like_count(int(post["id"])))
+                posts = zip(posts, post_likes)
                 is_friend = GDB.is_friend(request.session['user']['username'], username)
                 is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
                 show_button = not (is_friend or is_friend_request)
@@ -288,6 +292,7 @@ def add_comment(request, post_id):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     post = GDB.get_post_by_id(post_id)
     comments = GDB.get_comments(post_id)
+    likes = GDB.get_like_count(post_id)
     print(comments)
     username = request.session['user']['username']
     print(post.element_id)
@@ -299,4 +304,8 @@ def add_comment(request, post_id):
             GDB.create_comment(post_id, content, username)
             return redirect('add_comment', post_id=post_id)
 
-    return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id})
+    return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id, 'likes' : likes})
+
+def group_list(request):
+
+    return render(request, 'group_list.html')

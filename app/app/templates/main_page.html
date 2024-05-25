@@ -395,8 +395,10 @@ input[type="radio"]:checked + label {
                         {% csrf_token %}
                         <button type="submit">Private Messages</button>
                     </form>
-
-                    <button onclick="">Group Messages</button>
+                    <form method = "POST" action="{% url 'group_list'%}">
+                        {% csrf_token %}
+                    <button type="submit">Group Messages</button>
+                    </form>
                 </div>
                 <h2>Profile</h2>
                 <!-- Modification du profil -->

@@ -216,22 +216,11 @@
             </section>
             <section class="activities-block">
                 <h2>Activities and Posts</h2>
-                <div class="recent-activity">
-                    <h2>Recent Activity</h2>
-                    <ul>
-                        <!-- Exemple d'activité récente -->
-                        <li>
-                            <img src="" alt="Activity">
-                            <span>Activity Description</span>
-                        </li>
-                        <!-- Ajouter d'autres activités ici -->
-                    </ul>
-                </div>
                 <h2>{{ username }}'s Posts</h2>
                  <div class="user-posts">
 
                     <div class="posts">
-                        {% for post in posts %}
+                        {% for post, likes in posts %}
                             <div class="post">
                                 <p>{{ post.content }}</p>
                                 {% if post.image %}
@@ -239,7 +228,7 @@
                                     <img src="{% static post.image %}" alt="Post Image">
                                 {% endif %}
                                 <div class="post-meta">
-                                    <span>{{ post.number_like }} Likes</span>
+                                    <span>{{likes}} Likes</span>
                                     <button>Like</button>
                                     <button>Comment</button>
                                 </div>
