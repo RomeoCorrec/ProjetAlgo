@@ -153,16 +153,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Our Social Network</h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
-                <li><a href="{% url 'profil_page' %}" class="nav-link">{{username}}</a></li>
-                <li><a href="{% url 'deconnexion' %}" class="nav-link">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+{% include 'header.html' %}
     <div class="container">
         <div class="sidebar">
             <div class="group-section">
@@ -188,7 +179,6 @@
                             </div>
                             {% endfor %}
                         </li>
-
                     </ul>
                 </div>
             </div>
@@ -204,7 +194,6 @@
                             {% for friend in user_friends %}
                             <option value="{{friend}}">{{friend}}</option>
                             {% endfor %}
-
                         </select>
                         <input type="submit" value="Create Group">
                     </form>

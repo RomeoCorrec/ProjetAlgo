@@ -210,16 +210,7 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>My Social Network</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'main_page' %}">Home</a></li>
-                    <li><a href="{% url 'profil_page' %}">{{ request.session.user.username }}</a></li>
-                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
+        {% include 'header.html' %}
         <main>
             <section class="user-info-block">
                 <h2>{{ username }}'s Profile</h2>
