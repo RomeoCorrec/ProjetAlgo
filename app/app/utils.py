@@ -11,9 +11,11 @@ class graphDB:
 
     def add_new_user(self, user: User):
         with self._driver.session() as session:
-            query = "Create (u:User {username: $username, name: $name, surname: $surname, age: $age, password: $password, location: $location, sex: $sex, mail: $mail, private: false})"
+            query = """Create (u:User {username: $username, name: $name, surname: $surname, age: $age,
+             password: $password, location: $location, sex: $sex, mail: $mail, private: false,
+              profile_picture: $profile_picture})"""
             session.run(query, username=user.username, name=user.name, surname=user.surname, age=user.age,
-                        password=user.password, location=user.location, sex=user.sex, mail=user.mail)
+                        password=user.password, location=user.location, sex=user.sex, mail=user.mail, profile_picture=user.profile_picture)
 
     def delete_user_by_username(self, username):
         with self._driver.session() as session:
@@ -174,10 +176,10 @@ class graphDB:
             query = "MATCH (a:User {username: $sender})-[r:FRIEND]->(b:User {username: $receiver}) DELETE r"
             session.run(query, sender=receiver, receiver=sender)
 
-    def modify_profil(self, username, name, surname, age, location, sex, mail, private):
+    def modify_profil(self, username, name, surname, age, location, sex, mail, private, profile_picture):
         with self._driver.session() as session:
-            query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail, u.private = $private"
-            session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail, private=private)
+            query = "MATCH (u:User {username: $username}) SET u.name = $name, u.surname = $surname, u.age = $age, u.location = $location, u.sex = $sex, u.mail = $mail, u.private = $private, u.profile_picture = $profile_picture"
+            session.run(query, username=username, name=name, surname=surname, age=age, location=location, sex=sex, mail=mail, private=private, profile_picture=profile_picture)
         return
 
     def add_post(self, username, post):

@@ -10,6 +10,7 @@ class UserCreationForm(forms.Form):
     location = forms.CharField(max_length=100)
     sex = forms.CharField(max_length=10)
     mail = forms.EmailField()
+    profile_picture = forms.ImageField(required=False)
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(max_length=100)

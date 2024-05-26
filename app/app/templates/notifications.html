@@ -137,15 +137,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Your Social Network</h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'main_page' %}">Home</a></li>
-                <li><a href="{% url 'deconnexion' %}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+{% include 'header.html' %}
     <main>
         <section class="notifications-block">
             <h2>Your Notifications</h2>
