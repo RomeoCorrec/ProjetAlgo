@@ -461,15 +461,22 @@ class graphDB:
             messages = [{"sender": row["sender"], "content": row["content"], "timestamp": row["timestamp"]} for row in result]
             return messages
 
-    def create_notification(self, recipient_username, notification_type, content):
+    def get_group_users(self, group_name):
+        with self._driver.session() as session:
+            query = """MATCH (u:User)-[:PARTICIPATE]->(g:GroupDiscussion{name: $name})
+                    RETURN u.username as username"""
+            result = session.run(query, name = group_name)
+            usernames = [{"username": row["username"]} for row in result]
+            return usernames
+    def create_notification(self, recipient_username, notification_type, content, target_id):
         query = """
         MATCH (u:User {username: $recipient_username})
-        CREATE (n:Notification {type: $notification_type, content: $content, timestamp: $timestamp})
+        CREATE (n:Notification {type: $notification_type, content: $content, timestamp: $timestamp, target_id: $target_id})
         MERGE (u)-[:HAS_NOTIFICATION]->(n)
         """
         timestamp = datetime.datetime.now()
         with self._driver.session() as session:
-            session.run(query, recipient_username=recipient_username, notification_type=notification_type, content=content, timestamp=timestamp)
+            session.run(query, recipient_username=recipient_username, notification_type=notification_type, content=content, timestamp=timestamp, target_id = target_id)
 
     def get_notifications(self, username):
         query = """

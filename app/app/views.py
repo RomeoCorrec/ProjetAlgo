@@ -107,7 +107,7 @@ def like_post(request):
                 GDB.like_post(int(like_post_id), username)
                 post_author = GDB.get_post_by_id(int(like_post_id))["author"]
                 content = f"{username} liked your post."
-                GDB.create_notification(post_author, "like", content)
+                GDB.create_notification(post_author, "like", content, int(like_post_id))
     return redirect('main_page')
 
 def deconexion(request):
@@ -310,6 +310,8 @@ def visit_profil(request, username):
     is_friend = GDB.is_friend(request.session['user']['username'], username)
     is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
     show_button = not (is_friend or is_friend_request)
+    content = f"{request.session['user']['username']} visited your profil."
+    GDB.create_notification(username, "visited_profil", content, request.session['user']['username'])
     return render(request, 'search_profil.html', {"username": username, "name": name, "surname": surname, "age": age,
                                                   "location": location, "sex": sex, "mail": mail, "posts": posts,
                                                   "show_button": show_button, "friends":friends})
@@ -354,6 +356,8 @@ def send_private_messages(request):
             friend_username = request.POST.get('friend_name')
             GDB.create_message(username,friend_username, content_message)
             messages = GDB.get_messages(username, friend_username)
+            content = f"{username} sent you a private message: {content_message}"
+            GDB.create_notification(friend_username, "private_message", content, username)
             return redirect('private_message_page', friend_username=friend_username)
     return redirect('private_message_page', friend_username=friend_username)
 
@@ -369,12 +373,12 @@ def add_comment(request, post_id):
     post_id = int(post.element_id.split(':')[-1])
     print(post_id)
     if request.method == 'POST':
-        content = request.POST.get('comment_content')
-        if content:
-            GDB.create_comment(post_id, content, username)
+        content_comment = request.POST.get('comment_content')
+        if content_comment:
+            GDB.create_comment(post_id, content_comment, username)
             post_author = GDB.get_post_by_id(post_id)["author"]
-            content = f"{username} commented your post."
-            GDB.create_notification(post_author, "comment", content)
+            content = f"{username} commented your post: {content_comment}"
+            GDB.create_notification(post_author, "comment", content, post_id)
             return redirect('add_comment', post_id=post_id)
 
     return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id, 'likes' : likes})
@@ -405,6 +409,12 @@ def send_group_messages(request):
         if content_message:
             print("GROUP NAME", group_name)
             GDB.create_group_message(username,group_name, content_message)
+            usernames = GDB.get_group_users(group_name)
+            print(usernames)
+            for group_username in usernames:
+                if group_username['username'] != username:
+                    content = f"{username} sent you a message: {content_message} in the group {group_name}"
+                    GDB.create_notification(group_username['username'], "group_message", content, group_name)
     return redirect('group_messages_page', group_name=group_name)
 
 def group_messages_page(request, group_name):

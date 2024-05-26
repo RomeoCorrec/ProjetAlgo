@@ -49,6 +49,7 @@ main {
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
+    color: blue;
 }
 
 .comments {
@@ -156,7 +157,7 @@ nav ul li:first-child {
         </header>
         <main>
             <div class="post">
-                <p>Par : {{ post.author }}</p>
+                <p>{{ post.author }}</p>
                 <p>{{ post.content }}</p>
                 {% if post.image %}
                 <img src="{{ post.image }}" alt="Post Image">
@@ -170,7 +171,7 @@ nav ul li:first-child {
                 <h2>Comments</h2>
                 {% for comment in comments %}
                 <div class="comment">
-                    <p>{{ comment.username }}:</p>
+                    <p>{{ comment.username }}</p>
                     <p>{{ comment.content }}</p>
                     <div class="comment-meta">
                         <span>{{ comment.date}}</span>

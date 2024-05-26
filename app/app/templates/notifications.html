@@ -159,6 +159,18 @@
                         <div class="notification-timestamp">
                             {{ notification.timestamp }}
                         </div>
+                        {% if notification.type == 'like' or notification.type == 'comment' %}
+                            <a href = "{% url 'add_comment' notification.target_id %}"> See </a>
+                        {% endif %}
+                        {% if notification.type == 'private_message'%}
+                            <a href = "{% url 'private_message_page' notification.target_id %}"> See </a>
+                        {% endif %}
+                        {% if notification.type == 'group_message'%}
+                            <a href = "{% url 'group_messages_page' notification.target_id %}"> See </a>
+                        {% endif %}
+                        {% if notification.type == 'visited_profil'%}
+                            <a href = "{% url 'visit_profil' notification.target_id %}"> See </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
