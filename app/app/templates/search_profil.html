@@ -143,6 +143,12 @@
             color: #0056b3;
         }
 
+        video {
+            max-width: 50%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
         .friends ul, .recent-activity ul {
             list-style: none;
             padding: 0;
@@ -259,9 +265,16 @@
                         {% for post, likes in posts %}
                             <div class="post">
                                 <p>{{ post.content }}</p>
-                                {% if post.image %}
-                                    {% load static %}
-                                    <img src="{% static post.image %}" alt="Post Image">
+                                {% if post.media %}
+                                    {% if post.media_type == 'image' %}
+                                        {% load static %}
+                                        <img src="{% static post.media %}" alt="Post Image">
+                                    {% elif post.media_type == 'video' %}
+                                        <video controls>
+                                            {% load static %}
+                                            <source src="{% static post.media %}" type="video/mp4">
+                                        </video>
+                                    {% endif %}
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{likes}} Likes</span>

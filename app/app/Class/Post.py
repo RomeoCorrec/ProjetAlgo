@@ -2,9 +2,10 @@ from PIL import Image
 
 class Post:
 
-    def __init__(self, content, image=None):
+    def __init__(self, content, media=None, media_type=None):
         self.content = content
-        self.images = image
+        self.media = media
+        self.media_type = media_type
         self.number_like = 0
         self.comments = [str]
 

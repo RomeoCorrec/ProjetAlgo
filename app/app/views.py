@@ -164,21 +164,45 @@ def delete_post(request):
     return redirect("profil_page")
 
 
+# def post(request):
+#     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+#     username = request.session['user']['username']
+#     if request.method == 'POST':
+#         content = request.POST.get('content')
+#         image = request.FILES.get('image') if 'image' in request.FILES else None
+#         print("IMAGE:", image)
+#         if image:
+#             fs = FileSystemStorage('app/static/')
+#             filename = fs.save(image.name, image)
+#             uploaded_file_url = image.name
+#         else:
+#             uploaded_file_url = None
+#
+#         new_post = Post(content, uploaded_file_url)
+#         GDB.add_post(username, new_post)
+#     return redirect('profil_page')
 def post(request):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     username = request.session['user']['username']
     if request.method == 'POST':
         content = request.POST.get('content')
-        image = request.FILES.get('image') if 'image' in request.FILES else None
-        print("IMAGE:", image)
-        if image:
+        media = request.FILES.get('media')
+        print("MEDIA:", media)
+        if media:
             fs = FileSystemStorage('app/static/')
-            filename = fs.save(image.name, image)
-            uploaded_file_url = image.name
+            filename = fs.save(media.name, media)
+            uploaded_file_url = media.name
+            if media.content_type.startswith('image/'):
+                media_type = "image"
+            elif media.content_type.startswith('video/'):
+                media_type = "video"
+            else:
+                # Gérer les types de fichiers non pris en charge
+                pass
         else:
             uploaded_file_url = None
-
-        new_post = Post(content, uploaded_file_url)
+            media_type = None
+        new_post = Post(content, uploaded_file_url, media_type)
         GDB.add_post(username, new_post)
     return redirect('profil_page')
 
@@ -264,8 +288,12 @@ def visit_profil(request, username):
     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
     if username == request.session['user']['username']:
         return redirect('profil_page')
-    if GDB.is_private(username):
-        return render('search_profil.html', {'username': username, 'private': True})
+    is_friend = GDB.is_friend(request.session['user']['username'], username)
+    is_friend_request = GDB.has_send_friend_request(request.session['user']['username'], username)
+    if GDB.is_private(username) and not is_friend:
+        show_button = not (is_friend or is_friend_request)
+        return render(request, 'search_profil.html',
+                      {'username': username, 'private': True, 'show_button': show_button, 'is_friend': is_friend})
     user_info = GDB.get_user_by_username(username)
     name = user_info["name"]
     surname = user_info["surname"]

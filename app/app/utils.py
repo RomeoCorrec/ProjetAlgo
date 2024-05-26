@@ -183,8 +183,8 @@ class graphDB:
     def add_post(self, username, post):
         date = datetime.datetime.now()
         with self._driver.session() as session:
-            query_creation = "CREATE (p:Post {content: $content, image: $image, date: $date, author: $username})"
-            session.run(query_creation, content = post.content, image = post.images, date = date, username = username)
+            query_creation = "CREATE (p:Post {content: $content, media: $media, media_type: $media_type, date: $date, author: $username})"
+            session.run(query_creation, content = post.content, media = post.media, media_type = post.media_type, date = date, username = username)
             query_link = "MATCH (a:User {username: $username}) , (b:Post {date: $date}) CREATE (a)-[:POSTED]->(b)"
             session.run(query_link, username=username, date=date)
 
@@ -192,7 +192,7 @@ class graphDB:
         with self._driver.session() as session:
             query = """
             MATCH (a:User {username: $username})-[:POSTED]->(p:Post)
-            RETURN p.content AS content, p.image AS image, p.date AS date, p.author AS author, id(p) AS id
+            RETURN p.content AS content, p.media AS media, p.media_type as media_type, p.date AS date, p.author AS author, id(p) AS id
             ORDER BY p.date DESC
             """
             result = session.run(query, username=username)
@@ -200,7 +200,8 @@ class graphDB:
             for record in result:
                 post = {
                     'content': record['content'],
-                    'image': record['image'],
+                    'media': record['media'],
+                    'media_type': record['media_type'],
                     'date': record['date'],
                     'author': record['author'],
                     'id': record['id']
