@@ -30,6 +30,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        max-height: 90px;
     }
 
         header h1 {
@@ -41,6 +42,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            align-items: center;
         }
 
         header nav ul li {
@@ -59,6 +61,11 @@
             background-color: #0056b3; /* Couleur de fond au survol */
         }
 
+        header img {
+            border-radius: 50%;
+            width: 85px;
+        }
+
     ul {
        list-style: none;
        padding: 0;
@@ -66,7 +73,6 @@
     }
 
     li {
-        margin-bottom: 10px;
         padding: 15px;
         border-radius: 5px;
     }
@@ -343,13 +349,14 @@ input[type="radio"]:checked + label {
 .notification-badge {
     position: absolute;
     top: 5px;
-    right: 10px;
+    right: 20px;
     width: 10px;
     height: 10px;
     background-color: red;
     border-radius: 50%;
 }
-header nav ul li {
+
+header nav ul li{
     margin-left: 20px;
     position: relative; /* To position the notification badge */
 }
@@ -362,14 +369,20 @@ header nav ul li {
             <h1>My Social Network</h1>
             <nav>
                 <ul>
-                     <li>
+                    {% if request.session.user.profile_picture %}
+                    <li>
+                        {% load static %}
+                        <img src="{% static request.session.user.profile_picture %}" alt="Post Image">
+                    </li>
+                    {% endif %}
+                    <li>
                     <a href="{% url 'notifications_page' %}">
                         <i class="fas fa-bell"></i>
                         {% if has_new_notification %}
                         <span class="notification-badge"></span>
                         {% endif %}
                     </a>
-                     </li>
+                    </li>
                     <li><a href="{% url 'profil_page' %}">{{ request.session.user.username }}</a></li>
                     <li><a href="{% url 'deconnexion' %}">Logout</a></li>
                 </ul>
@@ -465,8 +478,7 @@ header nav ul li {
                                 {% for post, post_id, post_likes in recommended_posts %}
                                 <div class="post">
                                     <div class="credit">
-                                        <p>{{ post.author}}</p>
-                                        <a href="{% url 'visit_profil' post.author %}" class="visit-button">Visit Profile</a>
+                                        <a href = "{% url 'visit_profil' post.author %}" class="author">{{ post.author}}</a>
                                     </div>
                                     <p>{{ post.content }}</p>
                                     {% if post.image %}

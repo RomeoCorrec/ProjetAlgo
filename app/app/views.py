@@ -29,8 +29,17 @@ def create_account(request):
             location = form.cleaned_data['location']
             sex = form.cleaned_data['sex']
             mail = form.cleaned_data['mail']
+            profile_picture = request.FILES.get('profile_picture')
+            if profile_picture:
+                fs = FileSystemStorage('app/static/')
+                filename = fs.save(profile_picture.name, profile_picture)
+                uploaded_file_url = profile_picture.name
+            else:
+                uploaded_file_url = None
+            print("PROFILE PICTURE: ", profile_picture)
             # Ici, vous pouvez créer un objet User ou faire d'autres opérations nécessaires
             user = User(username, name, surname, age, hpassword, location, sex, mail)
+            user.profile_picture = uploaded_file_url
             GDB.add_new_user(user)
 
             return redirect('login')
@@ -231,8 +240,16 @@ def modify_profil(request):
         user_info["sex"] = request.POST['sex']
         user_info["mail"] = request.POST['mail']
         user_info["private"] = request.POST['private']
+        new_profile_picture = request.FILES.get('profile_picture')
+        print("NEW PROFILE PICTURE: ", new_profile_picture)
+        if new_profile_picture:
+            fs = FileSystemStorage('app/static/')
+            filename = fs.save(new_profile_picture.name, new_profile_picture)
+            uploaded_file_url = new_profile_picture.name
+        else:
+            uploaded_file_url = None
         GDB.modify_profil(username, user_info["name"], user_info["surname"], user_info["age"], user_info["location"],
-                          user_info["sex"], user_info["mail"], user_info["private"])
+                          user_info["sex"], user_info["mail"], user_info["private"], uploaded_file_url)
         modified_user = GDB.get_user_by_username(username)
         request.session['user'] = modified_user
     return redirect('profil_page')

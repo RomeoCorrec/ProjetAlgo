@@ -108,6 +108,7 @@
         .profile-container input[type="email"],
         .profile-container input[type="number"],
         .profile-container input[type="password"],
+        .profile-container input[type="file"],
         .profile-container select {
             padding: 10px;
             margin-bottom: 15px;
@@ -154,19 +155,11 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>My Social Network</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'main_page'%}">Home</a></li>
-                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
+        {% include 'header.html' %}
         <main>
             <div class="profile-container">
                 <h2>Edit Profile</h2>
-                <form method="post" action="{% url 'modify_profil'%}">
+                <form method="post" action="{% url 'modify_profil'%}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" value="{{name}}" required>
@@ -195,6 +188,9 @@
                         <option value="True" {% if user_info.private == True %}selected{% endif %}>True</option>
                         <option value="False" {% if user_info.sex == False %}selected{% endif %}>False</option>
                     </select>
+
+                    <label for="profile_picture">profile_picture</label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
 
                     <button type="submit">Save Changes</button>
                     <a href="{% url 'profil_page'%}" class="back-button">&#8592; Back to Profile</a>

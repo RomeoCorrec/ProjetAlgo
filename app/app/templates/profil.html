@@ -20,13 +20,14 @@
             min-height: 100vh;
         }
 
-   header {
+    header {
         background-color: #007bff;
         color: #fff;
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        max-height: 90px;
     }
 
         header h1 {
@@ -38,6 +39,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            align-items: center;
         }
 
         header nav ul li {
@@ -56,6 +58,11 @@
             background-color: #0056b3; /* Couleur de fond au survol */
         }
 
+        header img {
+            border-radius: 50%;
+            width: 85px;
+        }
+
     ul {
        list-style: none;
        padding: 0;
@@ -63,7 +70,6 @@
     }
 
     li {
-        margin-bottom: 10px;
         padding: 15px;
         border-radius: 5px;
     }
@@ -252,15 +258,7 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>My Social Network</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'main_page' %}">Home</a></li>
-                    <li><a href="{% url 'deconnexion' %}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
+        {% include 'header.html' %}
         <main>
             <section class="user-info-block">
                 <h2>{{ request.session.user.username }}'s Profile</h2>
