@@ -15,47 +15,6 @@
             flex-direction: column;
             min-height: 100vh;
         }
-                header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            margin: 0;
-        }
-
-        header nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        header nav ul li {
-            margin-left: 20px;
-        }
-
-        header nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            background-color: #007bff;
-            padding: 10px 15px;
-            border-radius: 5px;
-        }
-
-        header nav ul li a:hover {
-            background-color: #0056b3;
-        }
-        header, footer {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
         .container {
             display: flex;
             flex: 1;
@@ -71,15 +30,11 @@
             flex: 3;
             padding: 20px;
         }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
         .group-section {
             margin-bottom: 30px;
         }
         .group-section h2 {
-            color: #007bff;
+            color: #3A8EBA;
             margin-bottom: 15px;
         }
         .group-list, .group-invitations, .create-group {
@@ -101,7 +56,7 @@
             border-bottom: none;
         }
         .group-list a, .group-invitations a {
-            color: #007bff;
+            color: #1ABC9C;
             text-decoration: none;
             font-weight: bold;
         }
@@ -117,12 +72,12 @@
             box-sizing: border-box;
         }
         .create-group input[type="submit"] {
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             cursor: pointer;
         }
         .create-group input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #16A085;
         }
         .invitation-actions {
             display: flex;
@@ -150,6 +105,14 @@
         .reject:hover {
             background-color: #c82333;
         }
+        option {
+            font-weight: normal;
+            display: block;
+            min-height: 1.2em;
+            padding: 0px 2px 1px;
+            white-space: nowrap;
+            font-family: 'Roboto', sans-serif;
+}
     </style>
 </head>
 <body>
@@ -201,8 +164,6 @@
             </div>
         </div>
     </div>
-    <footer>
-        <p>&copy; 2024 Our Social Network. All rights reserved.</p>
-    </footer>
+        {% include 'footer.html' %}
 </body>
 </html>

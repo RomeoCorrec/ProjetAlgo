@@ -117,7 +117,7 @@
         }
 
         .profile-details p span {
-            color: #007bff;
+            color: #3A8EBA;
         }
 
         .friends, .user-posts, .create-post {
@@ -217,7 +217,7 @@
         .create-post button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -226,13 +226,13 @@
         }
 
         .create-post button:hover {
-            background-color: #0056b3;
+            background-color: #16A085;
         }
 
         .button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -241,15 +241,9 @@
         }
 
         .button:hover {
-            background-color: #0056b3;
+            background-color: #16A085;
         }
 
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: #007bff;
-            color: #fff;
-        }
         .user-posts {
         overflow-y: auto; /* Ajoute une barre de défilement vertical si nécessaire */
         max-height: 500px; /* Définissez une hauteur maximale pour la section */
@@ -329,9 +323,7 @@
                 </div>
             </section>
         </main>
-        <footer>
-            <p>&copy; 2024 ISEP</p>
-        </footer>
+            {% include 'footer.html' %}
     </div>
 </body>
 </html>

@@ -24,8 +24,8 @@
         }
         header {
             text-align: center;
-            padding: 50px 0;
-            background-color: #007bff;
+            padding: 20px 0;
+            background-color: #2C3E50;
             color: #fff;
         }
         header h1 {
@@ -50,7 +50,7 @@
         .button {
             display: inline-block;
             padding: 15px 30px;
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -58,7 +58,7 @@
             transition: background-color 0.3s;
         }
         .button:hover {
-            background-color: #0056b3;
+            background-color: #16A085;
         }
         .features {
             display: flex;
@@ -83,28 +83,11 @@
             font-size: 1em;
             color: #666;
         }
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #333;
-            color: #fff;
-            margin-top: auto;
-        }
-        footer p {
-            margin: 0;
-        }
-        footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Our Social Network</h1>
+        <h1>Welcome to Isep Network</h1>
         <p>Connect with friends and the world around you.</p>
     </header>
     <div class="container">
@@ -130,8 +113,6 @@
             </div>
         </section>
     </div>
-    <footer>
-        <p>&copy; 2024 Our Social Network. All rights reserved. | <a href="#">Privacy Policy</a></p>
-    </footer>
+        {% include 'footer.html' %}
 </body>
 </html>

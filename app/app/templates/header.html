@@ -5,13 +5,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
     header {
-        background-color: #007bff;
+        background-color: #2C3E50;
         color: #fff;
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        max-height: 90px;
+        max-height: 70px;
     }
 
         header h1 {
@@ -33,13 +33,13 @@
         header nav ul li a {
             color: #fff;
             text-decoration: none;
-            background-color: #007bff; /* Ajout de la couleur de fond */
+            background-color: #2C3E50; /* Ajout de la couleur de fond */
             padding: 10px 15px; /* Espacement autour du lien */
             border-radius: 5px; /* Coins arrondis */
         }
 
         header nav ul li a:hover {
-            background-color: #0056b3; /* Couleur de fond au survol */
+            background-color: #233140; /* Couleur de fond au survol */
         }
 
         header img {
@@ -80,7 +80,7 @@
 </style>
 </head>
 <header>
-    <h1>My Social Network</h1>
+    <h1>Isep Network</h1>
     <nav>
         <ul>
             {% if request.session.user.profile_picture %}

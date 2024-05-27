@@ -109,39 +109,28 @@
         }
 
         .profile-details p span {
-            color: #007bff;
+            color: #3A8EBA;
         }
 
         .posts .post {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 15px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .post-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
         }
 
         .post-meta span {
             font-size: 14px;
         }
 
-        .post-meta button {
-            background-color: transparent;
-            color: #007bff;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .post-meta button:hover {
-            color: #0056b3;
-        }
 
         video {
             max-width: 50%;
@@ -175,12 +164,6 @@
             color: #555;
         }
 
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: #007bff;
-            color: #fff;
-        }
         .posts .post img {
             max-width: 100%;
             max-heigth: 50px;
@@ -195,7 +178,7 @@
         .button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -204,8 +187,44 @@
         }
 
         .button:hover {
-            background-color: #0056b3;
+            background-color: #16A085;
         }
+       p.author {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: black;
+            font-family: 'Roboto', sans-serif;
+        }
+    p.content {
+        font-size: 16px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+        font-family: 'Open Sans', sans-serif;
+    }
+    p.date{
+        font-size: 10px;
+    }
+
+    .btn-link-like, .btn-link-comment{
+        font-family: 'Montserrat', sans-serif;
+        color: #005792;
+        background-color: #f9f9f9;
+        border: none;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    .btn-link-like:hover {
+        color: #2980B9; /* Une nuance légèrement plus sombre pour l'effet de survol */
+        background-color: #f9f9f9;
+    }
+    .btn-link-comment:hover {
+        color: #2980B9; /* Une nuance légèrement plus sombre pour l'effet de survol */
+        background-color: #f9f9f9;
+    }
     </style>
 </head>
 <body>
@@ -255,7 +274,9 @@
                     <div class="posts">
                         {% for post, likes in posts %}
                             <div class="post">
-                                <p>{{ post.content }}</p>
+                                <p class = "author"> {{post.author}}</p>
+                                <p class ="date"> {{post.date}}</p>
+                                <p class = "content">{{ post.content }}</p>
                                 {% if post.media %}
                                     {% if post.media_type == 'image' %}
                                         {% load static %}
@@ -269,8 +290,8 @@
                                 {% endif %}
                                 <div class="post-meta">
                                     <span>{{likes}} Likes</span>
-                                    <button>Like</button>
-                                    <button>Comment</button>
+                                    <button class="btn-link-like" >Like</button>
+                                    <button class="btn-link-comment">Comment</button>
                                 </div>
                             </div>
                         {% endfor %}
@@ -278,9 +299,7 @@
                 </div>
             </section>
         </main>
-        <footer>
-            <p>&copy; 2024 ISEP</p>
-        </footer>
+        {% include 'footer.html' %}
     </div>
 </body>
 </html>

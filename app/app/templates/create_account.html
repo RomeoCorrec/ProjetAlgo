@@ -12,6 +12,19 @@
             padding: 0;
             background-color: #f0f0f0;
         }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #2C3E50;
+            color: #fff;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+        header p {
+            font-size: 1.2em;
+        }
         .container {
             max-width: 400px;
             margin: auto;
@@ -19,11 +32,12 @@
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 50px;
+            margin-top: 20px;
+            margin-bot: 20px;
         }
         h1 {
             margin-top: 0;
-            color: #333;
+            color: #fff;
             text-align: center;
         }
         input[type="text"],
@@ -50,7 +64,7 @@
         .back-button {
             display: inline-block;
             margin-top: 20px;
-            color: #007bff;
+            color: #1ABC9C;
             text-decoration: none;
             font-size: 14px;
         }
@@ -60,6 +74,10 @@
         }
     </style>
 </head>
+    <header>
+        <h1>Welcome to Isep Network</h1>
+        <p>Connect with friends and the world around you.</p>
+    </header>
 <body>
 <div class = "container">
     <h1>Create Account</h1>
@@ -73,6 +91,6 @@
     </form>
     <a href="{% url 'home' %}" class="back-button">&#8592; Back to Home</a>
 </div>
-
+{% include 'footer.html' %}
 </body>
 </html>

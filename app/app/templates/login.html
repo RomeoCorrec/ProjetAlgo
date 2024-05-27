@@ -14,6 +14,21 @@
             flex-direction: column;
             min-height: 100vh;
         }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #2C3E50;
+            color: #fff;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+            color: #fff;
+        }
+        header p {
+            font-size: 1.2em;
+            color: #fff;
+        }
         .container {
             width: 100%;
             max-width: 400px;
@@ -43,7 +58,7 @@
             font-size: 16px;
         }
         input[type="submit"] {
-            background-color: #007bff;
+            background-color: #1ABC9C;
             color: #fff;
             cursor: pointer;
             transition: background-color 0.3s;
@@ -54,7 +69,7 @@
         .back-button {
             display: inline-block;
             margin-top: 20px;
-            color: #007bff;
+            color: #1ABC9C;
             text-decoration: none;
             font-size: 14px;
         }
@@ -67,24 +82,21 @@
             justify-content: space-between;
         }
         .additional-options a {
-            color: #007bff;
+            color: #1ABC9C;
             text-decoration: none;
             font-size: 14px;
         }
         .additional-options a:hover {
             text-decoration: underline;
         }
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: #333;
-            color: #fff;
-            margin-top: auto;
-            width: 100%;
-        }
+
     </style>
 </head>
 <body>
+    <header>
+        <h1>Welcome to Isep Network</h1>
+        <p>Connect with friends and the world around you.</p>
+    </header>
     <div class="container">
         <h1>Login</h1>
         <!-- Display error message if any -->
@@ -102,8 +114,6 @@
         </div>
         <a href="{% url 'index' %}" class="back-button">&#8592; Back to Home</a>
     </div>
-    <footer>
-        <p>&copy; 2024 Our Social Network. All rights reserved. | <a href="#">Privacy Policy</a></p>
-    </footer>
+    {% include 'footer.html' %}
 </body>
 </html>
