@@ -1,6 +1,6 @@
-from ProjetAlgo.app.app.Class.User import User
-from ProjetAlgo.app.app.utils import graphDB
+from app.app.Class.User import User
+from app.app.utils import graphDB
 
-GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
 
-print(GDB.get_filtered_posts("ROMEO", "image"))
+print(GDB.get_user_by_username("user"))

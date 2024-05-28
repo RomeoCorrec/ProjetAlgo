@@ -13,7 +13,7 @@ def create_account(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+            GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
             # Traitez les données du formulaire ici (par exemple, enregistrer l'utilisateur dans la base de données)
             # Exemple simplifié :
             username = form.cleaned_data['username']
@@ -57,7 +57,7 @@ def login_view(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+            GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
             # Vérifier si le mot de passe est bien le bon
             username = form.cleaned_data['username']
             if not GDB.check_username_exists(username):
@@ -75,7 +75,7 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 def main_page(request, filter=""):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     # Récupérer les amis de l'utilisateur
     friends = GDB.get_connected_users(username)
@@ -107,7 +107,7 @@ def main_page(request, filter=""):
                    'recommended_posts': sorted_recommended_posts, 'post_id': post_id, 'recommendations': recommendations,'has_new_notification':has_new_notification})
 
 def like_post(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     if request.method == 'POST':
         like_post_id = request.POST.get("like_post_id")
@@ -150,7 +150,7 @@ def is_valid_password(password: str) -> bool:
     return True
 
 def profil_page(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     posts = GDB.get_posts(username)
     friends = GDB.get_friends(username)
@@ -163,7 +163,7 @@ def profil_page(request):
     return render(request, 'profil.html', {'posts': posts, 'friends': friends})
 
 def delete_post(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if request.method == 'POST':
         delete_post_id = request.POST.get("delete_post_id")
         print("POST_ID: ",delete_post_id)
@@ -174,7 +174,7 @@ def delete_post(request):
 
 
 # def post(request):
-#     GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+#     GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
 #     username = request.session['user']['username']
 #     if request.method == 'POST':
 #         content = request.POST.get('content')
@@ -191,7 +191,7 @@ def delete_post(request):
 #         GDB.add_post(username, new_post)
 #     return redirect('profil_page')
 def post(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     if request.method == 'POST':
         content = request.POST.get('content')
@@ -216,7 +216,7 @@ def post(request):
     return redirect('profil_page')
 
 def modify_profil_page(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     user_info = GDB.get_user_by_username(username)
     name = user_info["name"]
@@ -229,7 +229,7 @@ def modify_profil_page(request):
                                                   "location": location, "sex": sex, "mail": mail})
 
 def modify_profil(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     user_info = GDB.get_user_by_username(username)
     if request.method == 'POST':
@@ -257,7 +257,7 @@ def modify_profil(request):
 def search_profil(request, username=None):
     if request.method == 'POST':
         search_query = request.POST.get('search_query', '')
-        GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+        GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
         if search_query:
             username = search_query
             if GDB.check_username_exists(username):
@@ -302,7 +302,7 @@ def filter_posts(request):
             return redirect('main_page')
 
 def visit_profil(request, username):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if username == request.session['user']['username']:
         return redirect('profil_page')
     is_friend = GDB.is_friend(request.session['user']['username'], username)
@@ -334,14 +334,14 @@ def visit_profil(request, username):
                                                   "show_button": show_button, "friends":friends})
 
 def send_friend_request(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     sender = request.session['user']['username']
     receiver = request.POST['to_user']
     GDB.add_new_friend_request(sender, receiver)
     return redirect('main_page')
 
 def accept_friend_request(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     sender = request.POST['friend_name']
     receiver = request.session['user']['username']
     GDB.accept_friend_request(sender, receiver)
@@ -350,7 +350,7 @@ def accept_friend_request(request):
 def private_messages_list(request):
     username = request.session['user']['username']
     print(username)
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if username:
         friends = GDB.get_friends(username)
         return render(request, 'private_message_list.html', {'friends': friends})
@@ -358,21 +358,24 @@ def private_messages_list(request):
         return render(request, 'login.html')
 
 def private_messages_page(request, friend_username):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     messages = GDB.get_messages(username, friend_username)
+    if not GDB.check_discussion(username, friend_username):
+        GDB.create_discussion(username, friend_username)
+
     return render(request, 'private_message.html', {'friend_username': friend_username, 'messages': messages})
 
 def send_private_messages(request):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if request.method == 'POST':
         friend_username = request.POST.get('friend_name')
         content_message = request.POST.get('send_message')
         if content_message:
             friend_username = request.POST.get('friend_name')
             GDB.create_message(username,friend_username, content_message)
-            messages = GDB.get_messages(username, friend_username)
+            #messages = GDB.get_messages(username, friend_username)
             content = f"{username} sent you a private message: {content_message}"
             GDB.create_notification(friend_username, "private_message", content, username)
             return redirect('private_message_page', friend_username=friend_username)
@@ -380,7 +383,7 @@ def send_private_messages(request):
 
 
 def add_comment(request, post_id):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     post = GDB.get_post_by_id(post_id)
     comments = GDB.get_comments(post_id)
     likes = GDB.get_like_count(post_id)
@@ -401,7 +404,7 @@ def add_comment(request, post_id):
     return render(request, 'add_comment.html', {'post': post, 'comments': comments, 'post_id': post_id, 'likes' : likes})
 
 def group_list(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     user_friends = GDB.get_friends(username)
     user_groups = GDB.get_groups(username)
@@ -409,7 +412,7 @@ def group_list(request):
     return render(request, 'group_list.html', {'user_friends' : user_friends, 'user_groups':user_groups, 'invitation_groups': invitation_groups, 'username':username})
 
 def create_group(request):
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     username = request.session['user']['username']
     if request.method == 'POST':
         group_name = request.POST.get('group_name')
@@ -419,7 +422,7 @@ def create_group(request):
 
 def send_group_messages(request):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if request.method == 'POST':
         group_name = request.POST.get('group_name')
         content_message = request.POST.get('send_message')
@@ -436,19 +439,19 @@ def send_group_messages(request):
 
 def group_messages_page(request, group_name):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     group_messages = GDB.get_group_messages(group_name)
     return render(request, 'group_message.html', {'group_messages':group_messages, 'group_name': group_name})
 
 def accept_group_invitation_model(request, group_name):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     GDB.accept_invitation_group(username, group_name)
     return redirect('group_list')
 
 def reject_group_invitation_model(request, group_name):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     GDB.refuse_invitation_group(username, group_name)
     print("GOUOP NALME",  group_name)
     return redirect('group_list')
@@ -456,7 +459,7 @@ def reject_group_invitation_model(request, group_name):
 
 def notifications_page(request):
     username = request.session['user']['username']
-    GDB = graphDB("bolt://localhost:7687", "neo4j", "password")
+    GDB = graphDB("neo4j+s://fb7779f4.databases.neo4j.io", "neo4j", "4DTufAW-6wB0UlMjaLpJ_53j1-ZzKV3N1U3tCCka9Qo")
     if not username:
         return redirect('login')
 
